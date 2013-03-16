@@ -86,7 +86,7 @@ class ScoreStave extends Stave
     private static inline var BottomPadding = 12;
     
     private static inline var TimeSignaturePriority = 2;
-    
+
     public function new(line:StaveLine, layout:ViewLayout)
     {
         super(line, layout);        
@@ -98,7 +98,11 @@ class ScoreStave extends Stave
         
         line.setFeaturePaintPriority(StaveFeatures.TimeSignature, TimeSignaturePriority);
     }
-   
+
+    public override function getStaveId() : String {
+        return STAVE_ID;
+    }
+
     // gets the spacing index used for grouping staves with a bar
     public override function getBarTopSpacing() : Int
     {
@@ -546,7 +550,10 @@ class ScoreStave extends Stave
         x += Math.round(3 * layout.scale);
         y += spacing.get(ScoreMiddleLines);
 
-        var fill:DrawingLayer = voice.index == 0 ? context.get(DrawingLayers.Voice1) : context.get(DrawingLayers.Voice2);
+        var fill: DrawingLayer = getVoiceDrawing(
+            voice.index,
+            context.get(DrawingLayers.Voice1),
+            context.get(DrawingLayers.Voice2));
 
         switch (voice.duration.value)
         {  
@@ -590,10 +597,16 @@ class ScoreStave extends Stave
         
         y += spacing.get(ScoreMiddleLines);
 
-        
-        var fill:DrawingLayer = voice.index == 0 ? context.get(DrawingLayers.Voice1) : context.get(DrawingLayers.Voice2);
-        var draw:DrawingLayer = voice.index == 0 ? context.get(DrawingLayers.VoiceDraw1) : context.get(DrawingLayers.VoiceDraw2);
-        
+        var fill: DrawingLayer = getVoiceDrawing(
+            voice.index,
+            context.get(DrawingLayers.Voice1),
+            context.get(DrawingLayers.Voice2));
+
+        var draw: DrawingLayer = getVoiceDrawing(
+            voice.index,
+            context.get(DrawingLayers.VoiceDraw1),
+            context.get(DrawingLayers.VoiceDraw2));
+
         if (voice.duration.value >= Duration.HALF)
         {
             var direction:Int = voice.beatGroup.getDirection();
@@ -758,9 +771,16 @@ class ScoreStave extends Stave
     {
         if (voice.duration.tuplet.equals(Tuplet.NORMAL)) return;
 
-        var fill:DrawingLayer = voice.index == 0 ? context.get(DrawingLayers.Voice1) : context.get(DrawingLayers.Voice2);
-        var draw:DrawingLayer = voice.index == 0 ? context.get(DrawingLayers.VoiceDraw1) : context.get(DrawingLayers.VoiceDraw2);
-        
+        var fill: DrawingLayer = getVoiceDrawing(
+            voice.index,
+            context.get(DrawingLayers.Voice1),
+            context.get(DrawingLayers.Voice2));
+
+        var draw: DrawingLayer = getVoiceDrawing(
+            voice.index,
+            context.get(DrawingLayers.VoiceDraw1),
+            context.get(DrawingLayers.VoiceDraw2));
+
         y += spacing.get(Triplet);
         
         // paint group if group is full and is first of group
@@ -808,9 +828,16 @@ class ScoreStave extends Stave
     {   
         var noteHeadY = y + spacing.get(ScoreMiddleLines) + getNoteScorePosY(layout, note);
         var noteHeadX = x;
-        
-        var fill:DrawingLayer = note.voice.index == 0 ? context.get(DrawingLayers.Voice1) : context.get(DrawingLayers.Voice2);
-        var effectLayer:DrawingLayer = note.voice.index == 0 ? context.get(DrawingLayers.VoiceEffects1) : context.get(DrawingLayers.VoiceEffects2);
+
+        var fill: DrawingLayer = getVoiceDrawing(
+            note.voice.index,
+            context.get(DrawingLayers.Voice1),
+            context.get(DrawingLayers.Voice2));
+
+        var effectLayer: DrawingLayer = getVoiceDrawing(
+            note.voice.index,
+            context.get(DrawingLayers.VoiceEffects1),
+            context.get(DrawingLayers.VoiceEffects2));
 
         // TODO: better accidental placement
         var direction = note.voiceDrawing().beatGroup.getDirection();
@@ -860,7 +887,7 @@ class ScoreStave extends Stave
             NotePainter.paintPercussion(fill, note, x, noteHeadY, layout.scale);
         }
         else if (note.effect.isHarmonic())
-        { 
+        {
             var full:Bool = note.voice.duration.value >= Duration.QUARTER;
             var layer:DrawingLayer = full ? fill : effectLayer;
             NotePainter.paintHarmonic(layer, noteHeadX, noteHeadY, layout.scale);
@@ -1048,9 +1075,11 @@ class ScoreStave extends Stave
         y += Math.round( (4 + layout.scale) * ((note.voiceDrawing().beatGroup.getDirection() == VoiceDirection.Up) ? 1 : -1));
         x += Math.round( (DrawingResources.getScoreNoteSize(layout, false).x / 1.5) - dotSize );
 
-        
+        var fill: DrawingLayer = getVoiceDrawing(
+            note.voice.index,
+            context.get(DrawingLayers.Voice1),
+            context.get(DrawingLayers.Voice2));
 
-        var fill:DrawingLayer = note.voice.index == 0 ? context.get(DrawingLayers.Voice1) : context.get(DrawingLayers.Voice2);
         fill.addCircle(x, y, dotSize);
     }
     private function paintDottedNote(layout:ViewLayout, context:DrawingContext, voice:VoiceDrawing, displaced:Bool, x:Int, y:Int)
@@ -1063,7 +1092,11 @@ class ScoreStave extends Stave
             x += displaceOffset;
         }
         
-        var fill:DrawingLayer = voice.index == 0 ? context.get(DrawingLayers.Voice1) : context.get(DrawingLayers.Voice2);
+        var fill: DrawingLayer = getVoiceDrawing(
+            voice.index,
+            context.get(DrawingLayers.Voice1),
+            context.get(DrawingLayers.Voice2));
+
         var dotSize:Float = 3.0 * layout.scale;
         
         x += Math.round(DrawingResources.getScoreNoteSize(layout, false).x + (4*layout.scale));

@@ -21,6 +21,7 @@ import alphatab.tablature.drawing.DrawingLayer;
 import alphatab.tablature.drawing.DrawingLayers;
 import alphatab.tablature.drawing.DrawingResources;
 import alphatab.tablature.drawing.MusicFont;
+import alphatab.tablature.model.VoiceDrawing;
 import alphatab.tablature.model.MeasureDrawing;
 import alphatab.tablature.ViewLayout;
 
@@ -38,12 +39,17 @@ class Stave
     public var line(default,default):StaveLine;
     public var spacing(default,default):StaveSpacing;
     public var layout(default,default):ViewLayout;
-    
+
+    // Whether use the same painting for all voices
+    public var multiVoiceSamePainting = false;
+
     public function new(line:StaveLine, layout:ViewLayout)
     {
         this.index = 0;
         this.line = line;
         this.layout = layout;
+
+        this.multiVoiceSamePainting = line.tablature.getStaveSetting(getStaveId(), "multiVoiceSamePainting", false);
     }
     
     public function getStaveId() : String
@@ -177,7 +183,17 @@ class Stave
             draw.addLine(x, y, x, bottomY);
         }
     }
-        
+
+    // Get appropriate voice drawing base on multiVoiceSamePainting var
+    public function getVoiceDrawing<T>(voice: Int,
+                                       voice1Data: T,
+                                       voice2Data: T): T {
+        if(multiVoiceSamePainting || voice == 0)
+            return voice1Data;
+        else
+            return voice2Data;
+    }
+
     private function paintTimeSignatureNumber(layout:ViewLayout, context:DrawingContext, number:Int, x:Int, y:Int, scale:Float)
     {
         if(number < 10)

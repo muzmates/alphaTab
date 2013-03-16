@@ -10329,9 +10329,11 @@ alphatab.tablature.model.VoiceDrawing.prototype = $extend(alphatab.model.Voice.p
 });
 if(!alphatab.tablature.staves) alphatab.tablature.staves = {}
 alphatab.tablature.staves.Stave = $hxClasses["alphatab.tablature.staves.Stave"] = function(line,layout) {
+	this.multiVoiceSamePainting = false;
 	this.index = 0;
 	this.line = line;
 	this.layout = layout;
+	this.multiVoiceSamePainting = line.tablature.getStaveSetting(this.getStaveId(),"multiVoiceSamePainting",false);
 };
 alphatab.tablature.staves.Stave.__name__ = ["alphatab","tablature","staves","Stave"];
 alphatab.tablature.staves.Stave.prototype = {
@@ -10372,6 +10374,9 @@ alphatab.tablature.staves.Stave.prototype = {
 			symbol = this.getTimeSignatureSymbol(secondDigit);
 			if(symbol != null) context.get(3).addMusicSymbol(symbol,x + 10 * scale,y,scale);
 		}
+	}
+	,getVoiceDrawing: function(voice,voice1Data,voice2Data) {
+		if(this.multiVoiceSamePainting || voice == 0) return voice1Data; else return voice2Data;
 	}
 	,paintDivisions: function(layout,context,measure,x,y,dotSize,offset,staveHeight) {
 		var x2;
@@ -10443,6 +10448,7 @@ alphatab.tablature.staves.Stave.prototype = {
 	,getStaveId: function() {
 		return "";
 	}
+	,multiVoiceSamePainting: null
 	,layout: null
 	,spacing: null
 	,line: null
@@ -10523,7 +10529,7 @@ alphatab.tablature.staves.ScoreStave.prototype = $extend(alphatab.tablature.stav
 		if(!voice.duration.isDotted && !voice.duration.isDoubleDotted) return;
 		var displaceOffset = Math.floor(alphatab.tablature.drawing.DrawingResources.getScoreNoteSize(layout,false).x);
 		if(voice.anyDisplaced && !displaced) x += displaceOffset;
-		var fill = voice.index == 0?context.get(9):context.get(5);
+		var fill = this.getVoiceDrawing(voice.index,context.get(9),context.get(5));
 		var dotSize = 3.0 * layout.scale;
 		x += Math.round(alphatab.tablature.drawing.DrawingResources.getScoreNoteSize(layout,false).x + 4 * layout.scale);
 		y += Math.round(4 * layout.scale);
@@ -10537,7 +10543,7 @@ alphatab.tablature.staves.ScoreStave.prototype = $extend(alphatab.tablature.stav
 		y = y + this.spacing.get(10) + this.getNoteScorePosY(layout,note1);
 		y += Math.round((4 + layout.scale) * (note1.voice.beatGroup.getDirection() == 1?1:-1));
 		x += Math.round(alphatab.tablature.drawing.DrawingResources.getScoreNoteSize(layout,false).x / 1.5 - dotSize);
-		var fill = note1.voice.index == 0?context.get(9):context.get(5);
+		var fill = this.getVoiceDrawing(note1.voice.index,context.get(9),context.get(5));
 		fill.addCircle(x,y,dotSize);
 	}
 	,paintHammerOn: function(layout,context,note,x,y) {
@@ -10623,8 +10629,8 @@ alphatab.tablature.staves.ScoreStave.prototype = $extend(alphatab.tablature.stav
 	,paintNote: function(layout,context,note,x,y) {
 		var noteHeadY = y + this.spacing.get(10) + this.getNoteScorePosY(layout,note);
 		var noteHeadX = x;
-		var fill = note.voice.index == 0?context.get(9):context.get(5);
-		var effectLayer = note.voice.index == 0?context.get(10):context.get(6);
+		var fill = this.getVoiceDrawing(note.voice.index,context.get(9),context.get(5));
+		var effectLayer = this.getVoiceDrawing(note.voice.index,context.get(10),context.get(6));
 		var direction = note.voice.beatGroup.getDirection();
 		var displaceOffset = Math.floor(alphatab.tablature.drawing.DrawingResources.getScoreNoteSize(layout,false).x);
 		if(note.displaced) {
@@ -10648,8 +10654,8 @@ alphatab.tablature.staves.ScoreStave.prototype = $extend(alphatab.tablature.stav
 	}
 	,paintTriplet: function(layout,context,voice,x,y) {
 		if(voice.duration.tuplet.equals(alphatab.model.Tuplet.NORMAL)) return;
-		var fill = voice.index == 0?context.get(9):context.get(5);
-		var draw = voice.index == 0?context.get(12):context.get(8);
+		var fill = this.getVoiceDrawing(voice.index,context.get(9),context.get(5));
+		var draw = this.getVoiceDrawing(voice.index,context.get(12),context.get(8));
 		y += this.spacing.get(6);
 		var previousVoice = voice.getPreviousVoice();
 		if(voice.tripletGroup.isFull() && (previousVoice == null || previousVoice.tripletGroup == null || previousVoice.tripletGroup != voice.tripletGroup)) {
@@ -10714,8 +10720,8 @@ alphatab.tablature.staves.ScoreStave.prototype = $extend(alphatab.tablature.stav
 	,paintBeam: function(layout,context,voice,x,y) {
 		if(voice.isRestVoice()) return;
 		y += this.spacing.get(10);
-		var fill = voice.index == 0?context.get(9):context.get(5);
-		var draw = voice.index == 0?context.get(12):context.get(8);
+		var fill = this.getVoiceDrawing(voice.index,context.get(9),context.get(5));
+		var draw = this.getVoiceDrawing(voice.index,context.get(12),context.get(8));
 		if(voice.duration.value >= alphatab.model.Duration.HALF) {
 			var direction = voice.beatGroup.getDirection();
 			var key = voice.beat.measure.header.keySignature;
@@ -10761,7 +10767,7 @@ alphatab.tablature.staves.ScoreStave.prototype = $extend(alphatab.tablature.stav
 	,paintSilence: function(layout,context,voice,x,y) {
 		x += Math.round(3 * layout.scale);
 		y += this.spacing.get(10);
-		var fill = voice.index == 0?context.get(9):context.get(5);
+		var fill = this.getVoiceDrawing(voice.index,context.get(9),context.get(5));
 		switch(voice.duration.value) {
 		case alphatab.model.Duration.WHOLE:
 			alphatab.tablature.drawing.SilencePainter.paintWhole(fill,x,y,layout);
@@ -11048,6 +11054,9 @@ alphatab.tablature.staves.ScoreStave.prototype = $extend(alphatab.tablature.stav
 	}
 	,getBarTopSpacing: function() {
 		return 8;
+	}
+	,getStaveId: function() {
+		return "score";
 	}
 	,__class__: alphatab.tablature.staves.ScoreStave
 });
@@ -11523,8 +11532,8 @@ alphatab.tablature.staves.TablatureStave.prototype = $extend(alphatab.tablature.
 		var endX = startX + voice.beat.fullWidth();
 		var prevOnSameStaveLine = previousVoice != null && previousVoice.beat.measure.staveLine == voice.beat.measure.staveLine;
 		var nextOnSameStaveLine = nextVoice != null && nextVoice.beat.measure.staveLine == voice.beat.measure.staveLine;
-		var fill = voice.index == 0?context.get(9):context.get(5);
-		var draw = voice.index == 0?context.get(12):context.get(8);
+		var fill = this.getVoiceDrawing(voice.index,context.get(9),context.get(5));
+		var draw = this.getVoiceDrawing(voice.index,context.get(12),context.get(8));
 		draw.startFigure();
 		y += alphatab.tablature.drawing.DrawingResources.effectFontHeight;
 		var isEnd = !nextVoiceEffect || !nextOnSameStaveLine;
@@ -11569,7 +11578,7 @@ alphatab.tablature.staves.TablatureStave.prototype = $extend(alphatab.tablature.
 		if(!voice.effectsCache.accentuatedNote && !voice.effectsCache.heavyAccentuatedNote) return;
 		var realX = x + voice.minNote.noteSize.x / 2;
 		var realY = y + this.spacing.get(1);
-		var layer = voice.index == 0?context.get(9):context.get(5);
+		var layer = this.getVoiceDrawing(voice.index,context.get(9),context.get(5));
 		var symbol = voice.effectsCache.accentuatedNote?alphatab.tablature.drawing.MusicFont.AccentuatedNote:alphatab.tablature.drawing.MusicFont.HeavyAccentuatedNote;
 		layer.addMusicSymbol(symbol,realX,realY,layout.scale);
 	}
@@ -11604,7 +11613,7 @@ alphatab.tablature.staves.TablatureStave.prototype = $extend(alphatab.tablature.
 		var realX = x;
 		var realY = y + this.getNoteTablaturePosY(layout,note);
 		realX += alphatab.tablature.drawing.DrawingResources.getScoreNoteSize(layout,false).x / 2 | 0;
-		var fill = note.voice.index == 0?context.get(9):context.get(5);
+		var fill = this.getVoiceDrawing(note.voice.index,context.get(9),context.get(5));
 		if(!note.isTiedNote) {
 			var visualNote = note.effect.deadNote?"X":Std.string(note.value);
 			visualNote = note.effect.ghostNote?"(" + visualNote + ")":visualNote;
@@ -11654,8 +11663,8 @@ alphatab.tablature.staves.TablatureStave.prototype = $extend(alphatab.tablature.
 	}
 	,paintBeam: function(layout,context,voice,x,y) {
 		if(voice.isRestVoice() || this.line.tablature.getStaveSetting("tablature","rhythm",false) == false) return;
-		var fill = voice.index == 0?context.get(9):context.get(5);
-		var draw = voice.index == 0?context.get(12):context.get(8);
+		var fill = this.getVoiceDrawing(voice.index,context.get(9),context.get(5));
+		var draw = this.getVoiceDrawing(voice.index,context.get(12),context.get(8));
 		if(voice.duration.value >= alphatab.model.Duration.HALF) {
 			var key = voice.beat.measure.header.keySignature;
 			var clef = voice.beat.measure.clef;

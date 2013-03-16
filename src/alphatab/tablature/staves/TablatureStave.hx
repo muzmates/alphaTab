@@ -16,6 +16,7 @@
  */
 package alphatab.tablature.staves;
 
+import alphatab.tablature.model.VoiceDrawing;
 import alphatab.model.BeatStrokeDirection;
 import alphatab.model.Color;
 import alphatab.model.Duration;
@@ -118,12 +119,11 @@ class TablatureStave extends Stave
 
         _rangeIndices = [0, 0];
     }
-    
-    public override function getStaveId() : String
-    {
-        return "tablature";
+
+    public override function getStaveId() : String {
+        return STAVE_ID;
     }
-    
+
     // gets the spacing index used for grouping staves
     public override function getBarTopSpacing() : Int
     {
@@ -316,9 +316,16 @@ class TablatureStave extends Stave
     {
         if (voice.isRestVoice() || line.tablature.getStaveSetting(STAVE_ID, "rhythm", false) == false) return;
         
-        var fill:DrawingLayer = voice.index == 0 ? context.get(DrawingLayers.Voice1) : context.get(DrawingLayers.Voice2);
-        var draw:DrawingLayer = voice.index == 0 ? context.get(DrawingLayers.VoiceDraw1) : context.get(DrawingLayers.VoiceDraw2);
-        
+        var fill: DrawingLayer = getVoiceDrawing(
+            voice.index,
+            context.get(DrawingLayers.Voice1),
+            context.get(DrawingLayers.Voice2));
+
+        var draw: DrawingLayer = getVoiceDrawing(
+            voice.index,
+            context.get(DrawingLayers.VoiceDraw1),
+            context.get(DrawingLayers.VoiceDraw2));
+
         if (voice.duration.value >= Duration.HALF)
         {
             var key:Int = voice.beat.measure.keySignature();
@@ -447,7 +454,12 @@ class TablatureStave extends Stave
 
         realX += Std.int(DrawingResources.getScoreNoteSize(layout, false).x / 2);
         // paint number for note
-        var fill:DrawingLayer = note.voice.index == 0 ? context.get(DrawingLayers.Voice1) : context.get(DrawingLayers.Voice2);
+
+        var fill: DrawingLayer = getVoiceDrawing(
+            note.voice.index,
+            context.get(DrawingLayers.Voice1),
+            context.get(DrawingLayers.Voice2));
+
         if (!note.isTiedNote)
         { 
             var visualNote:String = note.effect.deadNote ? "X" : Std.string(note.value);
@@ -529,11 +541,13 @@ class TablatureStave extends Stave
         
         var realX:Int = cast (x + (voice.minNote.noteSize.x / 2));
         var realY:Int = y + spacing.get(AccentuatedNote);
-        
-        var layer:DrawingLayer = voice.index == 0
-                                 ? context.get(DrawingLayers.Voice1)
-                                 : context.get(DrawingLayers.Voice2);
-        var symbol = voice.effectsCache.accentuatedNote ? MusicFont.AccentuatedNote : MusicFont.HeavyAccentuatedNote;              
+
+        var layer: DrawingLayer = getVoiceDrawing(
+            voice.index,
+            context.get(DrawingLayers.Voice1),
+            context.get(DrawingLayers.Voice2));
+
+        var symbol = voice.effectsCache.accentuatedNote ? MusicFont.AccentuatedNote : MusicFont.HeavyAccentuatedNote;
          
                                  
         layer.addMusicSymbol(symbol, realX, realY, layout.scale);
@@ -583,14 +597,16 @@ class TablatureStave extends Stave
         var endX:Float = startX + voice.beatDrawing().fullWidth();
         var prevOnSameStaveLine = previousVoice != null && previousVoice.measureDrawing().staveLine == voice.measureDrawing().staveLine;
         var nextOnSameStaveLine = nextVoice != null && nextVoice.measureDrawing().staveLine == voice.beatDrawing().measureDrawing().staveLine;
-                
-        var fill:DrawingLayer = voice.index == 0
-                         ? context.get(DrawingLayers.Voice1)
-                         : context.get(DrawingLayers.Voice2);
 
-        var draw:DrawingLayer = voice.index == 0
-                         ? context.get(DrawingLayers.VoiceDraw1)
-                         : context.get(DrawingLayers.VoiceDraw2);
+        var fill: DrawingLayer = getVoiceDrawing(
+            voice.index,
+            context.get(DrawingLayers.Voice1),
+            context.get(DrawingLayers.Voice2));
+
+        var draw: DrawingLayer = getVoiceDrawing(
+            voice.index,
+            context.get(DrawingLayers.VoiceDraw1),
+            context.get(DrawingLayers.VoiceDraw2));
 
         draw.startFigure();
         
