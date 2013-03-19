@@ -9839,7 +9839,21 @@ alphatab.tablature.model.MeasureDrawing = $hxClasses["alphatab.tablature.model.M
 alphatab.tablature.model.MeasureDrawing.__name__ = ["alphatab","tablature","model","MeasureDrawing"];
 alphatab.tablature.model.MeasureDrawing.__super__ = alphatab.model.Measure;
 alphatab.tablature.model.MeasureDrawing.prototype = $extend(alphatab.model.Measure.prototype,{
-	calculateKeySignatureSpacing: function(layout) {
+	isMultiVoice: function() {
+		var multiVoice = false;
+		var _g = 0, _g1 = this.beats;
+		while(_g < _g1.length) {
+			var beat = _g1[_g];
+			++_g;
+			if(beat.voices.length <= 1) break;
+			if(!beat.voices[0].isRestVoice() && !beat.voices[1].isRestVoice()) {
+				multiVoice = true;
+				break;
+			}
+		}
+		return multiVoice;
+	}
+	,calculateKeySignatureSpacing: function(layout) {
 		if(!this.header.shouldPaintKeySignature(this)) return 0;
 		var newKeySignature = this.header.keySignature;
 		var oldKeySignature = 0;
@@ -10626,12 +10640,13 @@ alphatab.tablature.staves.ScoreStave.prototype = $extend(alphatab.tablature.stav
 		}
 		return note.scorePosY;
 	}
-	,paintNote: function(layout,context,note,x,y) {
+	,paintNote: function(layout,context,note,voiceIndex,multiVoice,x,y) {
 		var noteHeadY = y + this.spacing.get(10) + this.getNoteScorePosY(layout,note);
 		var noteHeadX = x;
 		var fill = this.getVoiceDrawing(note.voice.index,context.get(9),context.get(5));
 		var effectLayer = this.getVoiceDrawing(note.voice.index,context.get(10),context.get(6));
-		var direction = note.voice.beatGroup.getDirection();
+		var direction = null;
+		if(multiVoice) direction = voiceIndex == 0?1:2; else direction = note.voice.beatGroup.getDirection();
 		var displaceOffset = Math.floor(alphatab.tablature.drawing.DrawingResources.getScoreNoteSize(layout,false).x);
 		if(note.displaced) {
 			if(direction == 1) noteHeadX += displaceOffset; else noteHeadX -= displaceOffset;
@@ -10717,13 +10732,14 @@ alphatab.tablature.staves.ScoreStave.prototype = $extend(alphatab.tablature.stav
 	,getOffset: function(offset) {
 		return offset * (this.layout.scoreLineSpacing / 8.0);
 	}
-	,paintBeam: function(layout,context,voice,x,y) {
+	,paintBeam: function(layout,context,voice,voiceIndex,multiVoice,x,y) {
 		if(voice.isRestVoice()) return;
 		y += this.spacing.get(10);
 		var fill = this.getVoiceDrawing(voice.index,context.get(9),context.get(5));
 		var draw = this.getVoiceDrawing(voice.index,context.get(12),context.get(8));
 		if(voice.duration.value >= alphatab.model.Duration.HALF) {
-			var direction = voice.beatGroup.getDirection();
+			var direction = null;
+			if(multiVoice) direction = voiceIndex == 0?1:2; else direction = voice.beatGroup.getDirection();
 			var key = voice.beat.measure.header.keySignature;
 			var clef = voice.beat.measure.clef;
 			var xMove = direction == 1?alphatab.tablature.drawing.DrawingResources.getScoreNoteSize(layout,false).x:0;
@@ -10807,17 +10823,17 @@ alphatab.tablature.staves.ScoreStave.prototype = $extend(alphatab.tablature.stav
 		}
 		this.paintDottedNote(layout,context,voice,false,x,y);
 	}
-	,paintVoice: function(layout,context,voice,x,y) {
+	,paintVoice: function(layout,context,voice,voiceIndex,multiVoice,x,y) {
 		if(!voice.isEmpty) {
 			if(voice.isRestVoice()) this.paintSilence(layout,context,voice,x,y); else {
 				var _g = 0, _g1 = voice.notes;
 				while(_g < _g1.length) {
 					var note = _g1[_g];
 					++_g;
-					this.paintNote(layout,context,note,x,y);
+					this.paintNote(layout,context,note,voiceIndex,multiVoice,x,y);
 				}
 			}
-			this.paintBeam(layout,context,voice,x,y);
+			this.paintBeam(layout,context,voice,voiceIndex,multiVoice,x,y);
 			this.paintTriplet(layout,context,voice,x,y);
 		}
 	}
@@ -10849,23 +10865,25 @@ alphatab.tablature.staves.ScoreStave.prototype = $extend(alphatab.tablature.stav
 			this.paintExtraLines2(context,layout,beat.maxNote,x,scoreY);
 		}
 	}
-	,paintBeat: function(layout,context,beat,x,y) {
+	,paintBeat: function(layout,context,beat,x,y,multiVoice) {
 		this.paintExtraLines(layout,context,beat,x,y);
-		var _g = 0, _g1 = beat.voices;
-		while(_g < _g1.length) {
-			var voice = _g1[_g];
-			++_g;
-			this.paintVoice(layout,context,voice,x,y);
+		var voices = beat.voices.length;
+		var _g = 0;
+		while(_g < voices) {
+			var i = _g++;
+			var voice = beat.voices[i];
+			this.paintVoice(layout,context,voice,i,multiVoice,x,y);
 		}
 		this.paintBeatEffects(layout,context,beat,x,y);
 	}
 	,paintBeats: function(layout,context,measure,x,y) {
+		var multiVoice = measure.isMultiVoice();
 		var _g = 0, _g1 = measure.beats;
 		while(_g < _g1.length) {
 			var beat = _g1[_g];
 			++_g;
 			var bd = beat;
-			this.paintBeat(layout,context,bd,x + bd.x,y);
+			this.paintBeat(layout,context,bd,x + bd.x,y,multiVoice);
 		}
 	}
 	,paintRepeatEndings: function(layout,context,measure,x,y) {
