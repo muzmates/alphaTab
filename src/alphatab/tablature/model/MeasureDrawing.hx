@@ -453,5 +453,21 @@ class MeasureDrawing extends Measure
         
         return Math.round((normalizingSymbols + offsetSymbols) * (8*layout.scale));
     }
-    
+
+    // Check if this measure has more than one active voice
+    public function isMultiVoice(): Bool {
+        var multiVoice = false;
+
+        for(beat in this.beats) {
+            if(beat.voices.length <= 1)
+                break;
+
+            if(!beat.voices[0].isRestVoice() && !beat.voices[1].isRestVoice()) {
+                multiVoice = true;
+                break;
+            }
+        }
+
+        return multiVoice;
+    }
 }

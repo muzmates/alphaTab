@@ -241,7 +241,7 @@ class ScoreStave extends Stave
         paintTempo(layout, context, measure, realX, y);
         paintTripletFeel(layout, context, measure, realX, y);
         paintMarker(layout, context, measure, realX, y);
-        
+
         paintBeats(layout, context, measure, realX, y);
     }
     
@@ -460,23 +460,32 @@ class ScoreStave extends Stave
         
     private function paintBeats(layout:ViewLayout, context:DrawingContext, measure:MeasureDrawing, x:Int, y:Int)
     {
+        var multiVoice = measure.isMultiVoice();
+
         for (beat in measure.beats)
         {
             var bd:BeatDrawing = cast beat;
-            paintBeat(layout, context, bd, x + bd.x, y);
+            paintBeat(layout, context, bd, x + bd.x, y, multiVoice);
             //x += bd.fullWidth();
         }
     }
     
-    private function paintBeat(layout:ViewLayout, context:DrawingContext, beat:BeatDrawing, x:Int, y:Int)
+    private function paintBeat(layout:ViewLayout,
+                               context:DrawingContext,
+                               beat:BeatDrawing,
+                               x:Int, y:Int, multiVoice: Bool)
     {
         // paint extra lines
         paintExtraLines(layout, context, beat, x, y);
-        
+
+        var voices = beat.voices.length;
+
         // paint voices
-        for (voice in beat.voices)
+        for (i in 0...voices)
         {
-            paintVoice(layout, context, cast voice, x, y);
+            var voice = beat.voices[i];
+
+            paintVoice(layout, context, cast voice, i, multiVoice, x, y);
         }
         
         // effects
@@ -523,7 +532,12 @@ class ScoreStave extends Stave
         }
     }
     
-    private function paintVoice(layout:ViewLayout, context:DrawingContext, voice:VoiceDrawing, x:Int, y:Int)
+    private function paintVoice(layout:ViewLayout,
+                                context:DrawingContext,
+                                voice:VoiceDrawing,
+                                voiceIndex: Int,
+                                multiVoice: Bool,
+                                x:Int, y:Int)
     {       
         if (!voice.isEmpty)
         {
@@ -536,11 +550,12 @@ class ScoreStave extends Stave
                 // paint notes
                 for (note in voice.notes)
                 {
-                    paintNote(layout, context, cast note, x, y);
+                    paintNote(layout, context, cast note, voiceIndex,
+                              multiVoice, x, y);
                 }
             }
             
-            paintBeam(layout, context, voice, x, y);        
+            paintBeam(layout, context, voice, voiceIndex, multiVoice, x, y);
             paintTriplet(layout, context, voice, x, y);
         }
     }
@@ -591,7 +606,12 @@ class ScoreStave extends Stave
         paintDottedNote(layout, context, voice, false, x, y);
     }
         
-    private function paintBeam(layout:ViewLayout, context:DrawingContext, voice:VoiceDrawing, x:Int, y:Int)
+    private function paintBeam(layout:ViewLayout,
+                               context:DrawingContext,
+                               voice:VoiceDrawing,
+                               voiceIndex: Int,
+                               multiVoice: Bool,
+                               x:Int, y:Int)
     {
         if (voice.isRestVoice()) return;
         
@@ -609,7 +629,13 @@ class ScoreStave extends Stave
 
         if (voice.duration.value >= Duration.HALF)
         {
-            var direction:Int = voice.beatGroup.getDirection();
+            var direction:Int = null;
+
+            if(multiVoice)
+                direction = voiceIndex == 0 ? VoiceDirection.Up : VoiceDirection.Down;
+            else
+                direction = voice.beatGroup.getDirection();
+
             var key:Int = voice.beat.measure.keySignature();
             var clef:Int = voice.beat.measure.clef;
             
@@ -824,7 +850,12 @@ class ScoreStave extends Stave
         }
     }
      
-    private function paintNote(layout:ViewLayout, context:DrawingContext, note:NoteDrawing, x:Int, y:Int)
+    private function paintNote(layout:ViewLayout,
+                               context:DrawingContext,
+                               note:NoteDrawing,
+                               voiceIndex: Int,
+                               multiVoice: Bool,
+                               x:Int, y:Int)
     {   
         var noteHeadY = y + spacing.get(ScoreMiddleLines) + getNoteScorePosY(layout, note);
         var noteHeadX = x;
@@ -840,7 +871,12 @@ class ScoreStave extends Stave
             context.get(DrawingLayers.VoiceEffects2));
 
         // TODO: better accidental placement
-        var direction = note.voiceDrawing().beatGroup.getDirection();
+        var direction = null;
+
+        if(multiVoice)
+            direction = voiceIndex == 0 ? VoiceDirection.Up : VoiceDirection.Down;
+        else
+            direction = note.voiceDrawing().beatGroup.getDirection();
 
         var displaceOffset:Int = Math.floor(DrawingResources.getScoreNoteSize(layout, false).x); 
         if (note.displaced)
