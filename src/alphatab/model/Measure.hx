@@ -106,5 +106,21 @@ class Measure
         beat.measure = this;
         beat.index = beats.length;
         beats.push(beat);
+
+        beats.sort(compareBeats);
+
+        for(i in 0...beats.length)
+            beats[i].index = i;
     }
+
+    private function compareBeats(a:Beat, b:Beat) : Int
+    {
+        if (a.start > b.start)
+            return 1;
+        if (a.start < b.start)
+            return -1;
+
+        return 0;
+    }
+
 }

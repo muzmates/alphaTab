@@ -222,7 +222,7 @@ class MeasureDrawing extends Measure
             }
         }
     }
-    
+
     // calculates the layout for this measure
     public function performLayout(layout:ViewLayout) : Void
     {       
@@ -234,8 +234,8 @@ class MeasureDrawing extends Measure
         registerSpacings(layout);
         
         // default spacing on start
-        width += getDefaultSpacings(layout, true);         
-         
+        width += getDefaultSpacings(layout, true);
+
         // do beat layouting
         var beatX = 0;
         for (i in 0 ... beatCount()) 
