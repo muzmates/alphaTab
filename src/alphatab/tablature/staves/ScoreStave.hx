@@ -510,7 +510,7 @@ class ScoreStave extends Stave
 
         var scorelineSpacing:Int = cast layout.scoreLineSpacing;
 
-        if (realY < y)
+        if ( (realY + scorelineSpacing * 2) < y)
         {
             var i = y;
             while (i > realY)
