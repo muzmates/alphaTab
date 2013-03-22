@@ -168,9 +168,9 @@ class Stave
                 fill.addCircle(x2, centerY - yMove - dotSize, dotSize);
                 fill.addCircle(x2, centerY + yMove, dotSize);
 
-                if (index == 0)
+                if (index == 0 && measure.header.repeatClose > 2)
                 {
-                    var repetitions:String = ("x" + (measure.header.repeatClose + 1));
+                    var repetitions:String = ("x" + (measure.header.repeatClose));
                     var numberSize = context.graphics.measureText(repetitions);
                     fill.addString(repetitions, DrawingResources.defaultFont, x2 - dotSize, 
                     y - DrawingResources.defaultFontHeight);
