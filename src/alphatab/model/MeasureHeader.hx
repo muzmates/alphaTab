@@ -50,7 +50,9 @@ class MeasureHeader
     public var repeatGroup:RepeatGroup;
     public var tripletFeel:Int;
     public var song:Song;
-    
+    public var direction: Direction;
+    public var alternateEndings: Int;
+
     public function length() : Int
     {
         return timeSignature.numerator * timeSignature.denominator.time();
@@ -69,6 +71,8 @@ class MeasureHeader
         repeatClose = 0;
         repeatAlternative = 0;
         realStart = -1;
+        direction = new Direction();
+        alternateEndings = 0;
     }
 
 }

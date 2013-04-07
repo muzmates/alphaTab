@@ -182,6 +182,23 @@ class DocumentReader
                 masterBar.barIds = toIntArray(masterBarNode.node.Bars.innerData);
                 masterBar.time = toIntArray2(masterBarNode.node.Time.innerData, "/");
                 
+                if(masterBarNode.hasNode.AlternateEndings)
+                    masterBar.alternateEndings = Std.parseInt(
+                        masterBarNode.node.AlternateEndings.innerData);
+
+                if(masterBarNode.hasNode.Directions)
+                {
+                    var d = masterBarNode.node.Directions;
+
+                    if(d.hasNode.Target) {
+                        masterBar.targets.push(d.node.Target.innerData);
+                    }
+
+                    if(d.hasNode.Jump) {
+                        masterBar.jumps.push(d.node.Jump.innerData);
+                    }
+                }
+
                 if(masterBarNode.hasNode.Repeat)
                 {
                     var repeatNode = masterBarNode.node.Repeat;

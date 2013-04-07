@@ -24,12 +24,19 @@ class GpxMasterBar
 {
     public var barIds(default,default):Array<Int>;
     public var time(default,default):Array<Int>;
-    
+
+    public var targets(default,default):Array<String>;
+    public var jumps(default,default):Array<String>;
+
     public var repeatCount(default,default):Int;
     public var repeatStart(default,default):Bool;
+
+    public var alternateEndings(default, default): Int;
     
     public function new()
     {
-        
+        targets = new Array<String>();
+        jumps = new Array<String>();
+        alternateEndings = 0;
     }
 }

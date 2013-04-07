@@ -20,6 +20,8 @@
  */
 package alphatab.file.gpx;
 
+import alphatab.model.Direction;
+import alphatab.model.Marker;
 import alphatab.model.PageSetup;
 import alphatab.model.Beat;
 import alphatab.model.Duration;
@@ -28,6 +30,7 @@ import alphatab.model.Measure;
 import alphatab.model.Song;
 import alphatab.model.SongFactory;
 import alphatab.model.Velocities;
+import alphatab.model.Color;
 import alphatab.file.gpx.score.GpxDrumkit;
 import alphatab.file.gpx.score.GpxDocument;
 import alphatab.file.gpx.score.GpxBar;
@@ -136,6 +139,24 @@ class DocumentParser
             measureHeader.number = i + 1;
             measureHeader.isRepeatOpen = mbar.repeatStart;
             measureHeader.repeatClose = mbar.repeatCount;
+
+            measureHeader.alternateEndings = mbar.alternateEndings;
+
+            for(t in mbar.targets) {
+                if(t == "Segno")
+                    measureHeader.direction.addTarget(Target.Segno);
+                else if(t == "Coda")
+                    measureHeader.direction.addTarget(Target.Coda);
+            }
+
+            for(j in mbar.jumps) {
+                if(j == "DaCoda")
+                    measureHeader.direction.addJump(Jump.DaCoda);
+
+                else if(j == "DaSegnoAlCoda")
+                    measureHeader.direction.addJump(Jump.DaSegnoAlCoda);
+            }
+
             if(mbar.time != null && mbar.time.length == 2)
             {
                 measureHeader.timeSignature.numerator = mbar.time[0];
