@@ -16,6 +16,7 @@
  */
 package alphatab.tablature.staves;
 
+import alphatab.model.Direction;
 import alphatab.model.Duration;
 import alphatab.model.effects.GraceEffectTransition;
 import alphatab.model.MeasureClef;
@@ -234,11 +235,13 @@ class ScoreStave extends Stave
         paintKeySignature(layout, context, measure, realX, y);
         paintTimeSignature(layout, context, measure, realX, y);
         
-        paintRepeatEndings(layout, context, measure, realX, y); 
-        
+        paintRepeatEndings(layout, context, measure, realX, y);
+
         realX += measure.getDefaultSpacings(layout);
+        paintCoda(layout, context, measure, realX, y);
         paintText(layout, context, measure, realX, y);
         paintTempo(layout, context, measure, realX, y);
+
         paintTripletFeel(layout, context, measure, realX, y);
         paintMarker(layout, context, measure, realX, y);
 

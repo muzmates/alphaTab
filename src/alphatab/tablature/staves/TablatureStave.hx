@@ -215,11 +215,12 @@ class TablatureStave extends Stave
         var w:Int = measure.width + measure.spacing;
         
         paintTimeSignature(layout, context, measure, realX, y);
-        
+
         paintDivisions(layout, context, measure, realX, y, 5, spacing.get(Tablature), spacing.spacing[Tablature]);
         paintClef(layout, context, measure, realX, y);
         
         realX += measure.getDefaultSpacings(layout);
+        paintCoda(layout, context, measure, realX, y);
         paintBeats(layout, context, measure, realX, y);
     }
     
@@ -837,11 +838,11 @@ class TablatureStave extends Stave
         // control points
         var cp1 = {
             x: center.x + (offset*normalVector.x),
-            y: center.y + (offset*normalVector.y),
+            y: center.y + (offset*normalVector.y)
         }; 
         var cp2 = {
             x: center.x + ((offset-size)*normalVector.x),
-            y: center.y + ((offset-size)*normalVector.y),
+            y: center.y + ((offset-size)*normalVector.y)
         };
         layer.startFigure();
         layer.moveTo(x1, y1);

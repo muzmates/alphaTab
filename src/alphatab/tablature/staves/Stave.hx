@@ -16,6 +16,7 @@
  */
 package alphatab.tablature.staves;
 
+import alphatab.model.Direction;
 import alphatab.tablature.drawing.DrawingContext;
 import alphatab.tablature.drawing.DrawingLayer;
 import alphatab.tablature.drawing.DrawingLayers;
@@ -109,9 +110,12 @@ class Stave
         
         var startY = y;
         
-        
         var bottomY:Int;
-        
+
+        // Directions
+        if(measure.header.direction.hasTarget(Target.Segno))
+            fill.addMusicSymbol(MusicFont.Segno, x, y, layout.scale);
+
         if (index == 0) // the first stave will get the infos and won't draw any upper offset
         { 
             context.get(DrawingLayers.Red).addString(number, DrawingResources.defaultFont, x + Math.round(layout.scale*2), y + offset - DrawingResources.defaultFontHeight);
@@ -119,7 +123,7 @@ class Stave
         y += offset;
         bottomY = y + staveHeight;      
         
-        dotSize = cast Math.max(1, (dotSize * layout.scale));   
+        dotSize = cast Math.max(1, (dotSize * layout.scale));
 
         // RepeatEndings
         if (measure.header.isRepeatOpen)
@@ -182,6 +186,7 @@ class Stave
             draw.startFigure();
             draw.addLine(x, y, x, bottomY);
         }
+
     }
 
     // Get appropriate voice drawing base on multiVoiceSamePainting var
@@ -242,5 +247,15 @@ class Stave
                 return MusicFont.Num9;
         }
         return null;
+    }
+
+    // Paint Coda sign
+    private function paintCoda(layout, context, measure, realX, y) {
+        if(!measure.header.direction.hasTarget(Target.Coda))
+            return;
+
+        var fill: DrawingLayer = context.get(DrawingLayers.MainComponents);
+
+        fill.addMusicSymbol(MusicFont.Coda, realX, y, layout.scale);
     }
 }

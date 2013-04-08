@@ -42,8 +42,13 @@ class SvgPainter
         _xScale = xScale * 0.98;
         _yScale = yScale * 0.98;
         _currentPosition = new Point(x, y);
-        _token = svg.split(" ");
         _currentIndex = 0;
+
+        //var r = ~/([A-z])([\d-\sA-z])/g;
+        //var tmp = StringTools.replace(svg, ",", " ");
+        //_token = r.replace(tmp, " $1 $2").split(" ");
+
+        _token = StringTools.replace(svg, ",", " ").split(" ");
     }
     
     public function paint(): Void
