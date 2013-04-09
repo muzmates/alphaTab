@@ -16,6 +16,7 @@
  */
 package alphatab.tablature.staves;
 
+import alphatab.model.Measure;
 import alphatab.model.Direction;
 import alphatab.tablature.drawing.DrawingContext;
 import alphatab.tablature.drawing.DrawingLayer;
@@ -150,8 +151,17 @@ class Stave
             draw.addLine(x, y, x, bottomY);
         }
         
+        if(measure.header.direction.hasJump(Jump.DaCoda)) {
+            measureHeaderTailText("Da Coda", measure, context, layout, x, y);
+        }
+
+        if(measure.header.direction.hasJump(Jump.DaSegnoAlCoda)) {
+            measureHeaderTailText("D.S. al Coda", measure, context, layout, x, y);
+        }
+
         // Repeat Closings
         x += measure.width + measure.spacing;
+
         if (measure.header.repeatClose > 0 || measure.header.number == measure.track.measureCount())
         {
             // add a rect and a line
@@ -257,5 +267,24 @@ class Stave
         var fill: DrawingLayer = context.get(DrawingLayers.MainComponents);
 
         fill.addMusicSymbol(MusicFont.Coda, realX, y, layout.scale);
+    }
+
+    // Paint text at measure header tail
+    private function measureHeaderTailText(text: String,
+                                           measure: MeasureDrawing,
+                                           context: DrawingContext,
+                                           layout: ViewLayout, x, y) {
+        var font = DrawingResources.defaultFont;
+        var fontHeight = DrawingResources.defaultFontHeight;
+
+        layout.tablature.canvas.font = font;
+
+        var len = layout.tablature.canvas.measureText(text);
+        var xx = x + measure.width + measure.spacing - len;
+
+        var comp = context.get(DrawingLayers.MainComponents);
+
+        comp.addString(text, font, xx + Math.round(layout.scale*2),
+                       y - fontHeight);
     }
 }
