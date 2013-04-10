@@ -287,4 +287,24 @@ class Stave
         comp.addString(text, font, xx + Math.round(layout.scale*2),
                        y - fontHeight);
     }
+
+    // Paint alternate ending sign
+    private function paintAlternateEndings(layout: ViewLayout,
+                                           context: DrawingContext,
+                                           measure: MeasureDrawing, x, y) {
+
+        if(measure.header.alternateEndings == 0)
+            return;
+
+        var draw:DrawingLayer = context.get(DrawingLayers.MainComponentsDraw);
+
+        draw.addLine(x, y, x, y + 8);
+        draw.addLine(x, y, x + measure.width + measure.spacing, y);
+
+        var num = Std.string(measure.header.alternateEndings);
+
+        context.get(DrawingLayers.MainComponentsDraw)
+        .addString(num, DrawingResources.defaultFont,
+        x + 5, y + DrawingResources.defaultFontHeight);
+    }
 }

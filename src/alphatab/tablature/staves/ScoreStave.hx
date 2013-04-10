@@ -93,9 +93,9 @@ class ScoreStave extends Stave
         super(line, layout);        
         spacing = new StaveSpacing(BottomPadding + 1);
         spacing.set(TopPadding, Math.floor(15 * layout.scale));
-        spacing.set(ScoreTopPadding, Math.floor(15 * layout.scale));
+        spacing.set(ScoreTopPadding, Math.floor(18 * layout.scale));
         spacing.set(ScoreMiddleLines, Math.floor(layout.scoreLineSpacing * 4));
-        spacing.set(BottomPadding, Math.floor(15 * layout.scale));
+        spacing.set(BottomPadding, Math.floor(35 * layout.scale));
         
         line.setFeaturePaintPriority(StaveFeatures.TimeSignature, TimeSignaturePriority);
     }
@@ -236,6 +236,7 @@ class ScoreStave extends Stave
         paintTimeSignature(layout, context, measure, realX, y);
         
         paintRepeatEndings(layout, context, measure, realX, y);
+        paintAlternateEndings(layout, context, measure, realX, y);
 
         realX += measure.getDefaultSpacings(layout);
         paintCoda(layout, context, measure, realX, y);

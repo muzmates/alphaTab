@@ -156,7 +156,7 @@ class PageViewLayout extends ViewLayout
             
             // add it to offset
             posY += line.getHeight();
-            
+
             // next measure index
             nextMeasureIndex = line.lastIndex() + 1;
         }
@@ -217,7 +217,7 @@ class PageViewLayout extends ViewLayout
                     
             line.addMeasure(i);
         }
-        line.width = x;        
+        line.width = x;
         return line;
     }
     
