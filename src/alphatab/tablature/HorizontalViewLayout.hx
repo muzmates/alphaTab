@@ -69,20 +69,27 @@ class HorizontalViewLayout extends ViewLayout
     {
         width = 0;
         height = 0;
-        
+
         var posY:Int = y;
-        
+
+        var startIndex:Int = tablature.getLayoutSetting("startMeasure", -1);
+        startIndex--;
+        startIndex = Std.int(Math.min(tablature.track.measureCount() - 1, Math.max(0, startIndex)));
+
+        var endIndex:Int = tablature.getLayoutSetting("measureCount", tablature.track.measures.length);
+        endIndex = startIndex + endIndex - 1;
+        endIndex = Std.int(Math.min(tablature.track.measureCount() - 1, Math.max(0, endIndex)));
+
         var track:Track = tablature.track;
-        var measureCount:Int = tablature.track.measures.length;
-        var nextMeasureIndex:Int = 0;
+        var nextMeasureIndex:Int = startIndex;
         
         x += contentPadding.left;
         posY = Math.floor(posY + firstMeasureSpacing);
          
-        while (measureCount > nextMeasureIndex) 
+        while (endIndex >= nextMeasureIndex)
         {
             // calculate a stave line
-            _line = getStaveLine(track, nextMeasureIndex, posY, x);
+            _line = getStaveLine(track, nextMeasureIndex, endIndex, posY, x);
 
             // add it to offset
             posY += _line.getHeight();
@@ -97,7 +104,8 @@ class HorizontalViewLayout extends ViewLayout
         layoutSize = new Point(width, height);
     }
         
-    public function getStaveLine(track:Track, startIndex:Int, y:Int, x:Int) : StaveLine
+    public function getStaveLine(track:Track, startIndex:Int, endIndex: Int,
+                                 y:Int, x:Int) : StaveLine
     {
         var line:StaveLine = createStaveLine(track);
         line.y = y;
@@ -107,7 +115,7 @@ class HorizontalViewLayout extends ViewLayout
         line.spacing.set(StaveLine.TopPadding, Math.floor(10 * scale));
         line.spacing.set(StaveLine.BottomSpacing, Math.floor(10 * scale));
         
-        var measureCount = track.measureCount(); 
+        var measureCount = endIndex + 1;
         x = 0;
         for (i in startIndex ... measureCount) 
         {

@@ -137,7 +137,6 @@ class PageViewLayout extends ViewLayout
         endIndex = startIndex + endIndex - 1;
         endIndex = Std.int(Math.min(tablature.track.measureCount() - 1, Math.max(0, endIndex)));
 
-        
         var track:Track = tablature.track;
         var nextMeasureIndex:Int = startIndex;
         

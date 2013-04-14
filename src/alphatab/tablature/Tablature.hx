@@ -124,7 +124,6 @@ class Tablature
         return value != null ? value : defaultValue;
     }
      
-    
     public function setLayoutSetting(setting:String, value:Dynamic)
     {   
         settings.set("layout." + setting, value);
@@ -135,7 +134,12 @@ class Tablature
         var value:Dynamic = settings.get("layout." + setting);
         return value != null ? value : defaultValue;
     }
-    
+
+    public function removeLayoutSetting(setting:String)
+    {
+        settings.remove("layout." + setting);
+    }
+
     public function setTrack(track:Track) : Void 
     {
         this.track = track;
@@ -211,12 +215,12 @@ class Tablature
      
     public function paintBackground() {
         // attention, you are not allowed to remove change this notice within any version of this library without permission!
-        var msg = "Rendered using alphaTab (http://www.alphaTab.net)";
-        canvas.fillStyle = "#4e4e4e";
-        canvas.font = DrawingResources.copyrightFont;
-        canvas.textBaseline = "top";
-        var x:Float = (canvas.width - canvas.measureText(msg)) / 2;
-        canvas.fillText(msg, x, canvas.height - 15);
+        //var msg = "Rendered using alphaTab (http://www.alphaTab.net)";
+        //canvas.fillStyle = "#4e4e4e";
+        //canvas.font = DrawingResources.copyrightFont;
+        //canvas.textBaseline = "top";
+        //var x:Float = (canvas.width - canvas.measureText(msg)) / 2;
+        //canvas.fillText(msg, x, canvas.height - 15);
     }
     
     public function invalidate() 
