@@ -163,7 +163,7 @@ class Tuning
 
         _sixStrings.push(new Tuning("Guitar Standard Tuning", [64,59,55,50,45,40], true));
         
-        _sixStrings.push(new Tuning("Guitar Tune down ½ step", [63,58,54,49,44,39], false));
+        _sixStrings.push(new Tuning("Guitar Tune down 1/2 step", [63,58,54,49,44,39], false));
         _sixStrings.push(new Tuning("Guitar Tune down 1 step", [62,57,53,48,43,38], false));
         _sixStrings.push(new Tuning("Guitar Tune down 2 step", [60,55,51,46,41,36], false));
         _sixStrings.push(new Tuning("Guitar Dropped D Tuning", [64,59,55,50,45,38], false));
@@ -203,7 +203,7 @@ class Tuning
         _fiveStrings.push(new Tuning("Banjo G Modal Tuning", [62,57,55,50,67], false));
         
         _fourStrings.push(new Tuning("Bass Standard Tuning", [43,38,33,28], true));
-        _fourStrings.push(new Tuning("Bass Tune down ½ step", [42,37,32,27], false));
+        _fourStrings.push(new Tuning("Bass Tune down 1/2 step", [42,37,32,27], false));
         _fourStrings.push(new Tuning("Bass Tune down 1 step", [41,36,31,26], false));
         _fourStrings.push(new Tuning("Bass Tune down 2 step", [39,34,29,24], false));
         _fourStrings.push(new Tuning("Bass Dropped D Tuning", [43,38,33,26], false));
