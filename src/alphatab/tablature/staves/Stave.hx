@@ -45,6 +45,9 @@ class Stave
     // Whether use the same painting for all voices
     public var multiVoiceSamePainting = false;
 
+    // Whether to paint alternate endings
+    public var bothStavesActive = false;
+
     public function new(line:StaveLine, layout:ViewLayout)
     {
         this.index = 0;
@@ -52,6 +55,7 @@ class Stave
         this.layout = layout;
 
         this.multiVoiceSamePainting = line.tablature.getStaveSetting(getStaveId(), "multiVoiceSamePainting", false);
+        this.bothStavesActive = line.tablature.getStaveSetting(getStaveId(), "bothStavesActive", false);
     }
     
     public function getStaveId() : String
@@ -114,8 +118,10 @@ class Stave
         var bottomY:Int;
 
         // Directions
-        if(measure.header.direction.hasTarget(Target.Segno))
-            fill.addMusicSymbol(MusicFont.Segno, x, y, layout.scale);
+        if(measure.header.direction.hasTarget(Target.Segno)) {
+            if(!Std.is(this, TablatureStave) || !this.bothStavesActive)
+                fill.addMusicSymbol(MusicFont.Segno, x, y, layout.scale);
+        }
 
         if (index == 0) // the first stave will get the infos and won't draw any upper offset
         { 
@@ -150,13 +156,16 @@ class Stave
             draw.startFigure();
             draw.addLine(x, y, x, bottomY);
         }
-        
-        if(measure.header.direction.hasJump(Jump.DaCoda)) {
-            measureHeaderTailText("Da Coda", measure, context, layout, x, y);
-        }
 
-        if(measure.header.direction.hasJump(Jump.DaSegnoAlCoda)) {
-            measureHeaderTailText("D.S. al Coda", measure, context, layout, x, y);
+        if(!Std.is(this, TablatureStave) || !this.bothStavesActive){
+            if(measure.header.direction.hasJump(Jump.DaCoda)) {
+                measureHeaderTailText("Da Coda", measure, context, layout, x, y);
+            }
+
+            if(measure.header.direction.hasJump(Jump.DaSegnoAlCoda)) {
+                measureHeaderTailText("D.S. al Coda", measure, context,
+                layout, x, y);
+            }
         }
 
         // Repeat Closings

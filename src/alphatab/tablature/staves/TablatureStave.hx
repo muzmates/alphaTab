@@ -218,10 +218,15 @@ class TablatureStave extends Stave
 
         paintDivisions(layout, context, measure, realX, y, 5, spacing.get(Tablature), spacing.spacing[Tablature]);
         paintClef(layout, context, measure, realX, y);
-        paintAlternateEndings(layout, context, measure, realX, y);
+
+        if(!this.bothStavesActive)
+            paintAlternateEndings(layout, context, measure, realX, y);
 
         realX += measure.getDefaultSpacings(layout);
-        paintCoda(layout, context, measure, realX, y);
+
+        if(!this.bothStavesActive)
+            paintCoda(layout, context, measure, realX, y);
+
         paintBeats(layout, context, measure, realX, y);
     }
     
