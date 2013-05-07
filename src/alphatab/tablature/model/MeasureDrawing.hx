@@ -462,7 +462,12 @@ class MeasureDrawing extends Measure
             if(beat.voices.length <= 1)
                 break;
 
-            if(!beat.voices[0].isRestVoice() && !beat.voices[1].isRestVoice()) {
+            if(beat.voices[0].isRestVoice() && !beat.voices[1].isRestVoice()) {
+                multiVoice = true;
+                break;
+            }
+
+            if(!beat.voices[0].isRestVoice() && beat.voices[1].isRestVoice()) {
                 multiVoice = true;
                 break;
             }
