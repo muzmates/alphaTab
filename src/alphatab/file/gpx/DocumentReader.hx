@@ -20,6 +20,7 @@
  */
 package alphatab.file.gpx;
 
+import haxe.io.Bytes;
 import alphatab.io.Byte;
 import haxe.xml.Fast;
 import alphatab.model.Padding;
@@ -42,12 +43,8 @@ class DocumentReader
     
     public function new(stream:Array<Byte>)
     {
-        var str = "";
-        for(i in stream)
-        {
-            str += String.fromCharCode(i);
-        }
-        
+        var str:String = Bytes.ofData(stream).toString();
+
         _xmlDocument = Xml.parse(str);
         _dom = new Fast(_xmlDocument.firstElement());
         _gpxDocument = new GpxDocument();    
