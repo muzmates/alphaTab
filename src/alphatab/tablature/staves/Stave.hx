@@ -305,15 +305,23 @@ class Stave
         if(measure.header.alternateEndings == 0)
             return;
 
+        var val = measure.header.alternateEndings;
+        var prev: MeasureDrawing = measure.getPreviousMeasure();
+        // Alternate endings sign continues from previous measure
+        var is_cont = prev != null && prev.header.alternateEndings == val;
+
         var draw:DrawingLayer = context.get(DrawingLayers.MainComponentsDraw);
 
-        draw.addLine(x, y, x, y + 8);
         draw.addLine(x, y, x + measure.width + measure.spacing, y);
 
-        var num = Std.string(measure.header.alternateEndings);
+        if(!is_cont) {
+            draw.addLine(x, y, x, y + 8);
 
-        context.get(DrawingLayers.MainComponentsDraw)
-        .addString(num, DrawingResources.defaultFont,
-        x + 5, y + DrawingResources.defaultFontHeight);
+            var num = Std.string(measure.header.alternateEndings);
+
+            context.get(DrawingLayers.MainComponentsDraw)
+            .addString(num, DrawingResources.defaultFont,
+            x + 5, y + DrawingResources.defaultFontHeight);
+        }
     }
 }
