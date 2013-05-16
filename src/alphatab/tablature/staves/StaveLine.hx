@@ -16,6 +16,8 @@
  */
 package alphatab.tablature.staves;
 
+import alphatab.tablature.model.BarreDrawning;
+import alphatab.model.Beat;
 import alphatab.model.Track;
 import alphatab.tablature.drawing.DrawingContext;
 import alphatab.tablature.drawing.DrawingLayer;
@@ -23,6 +25,7 @@ import alphatab.tablature.drawing.DrawingLayers;
 import alphatab.tablature.model.MeasureDrawing;
 import alphatab.tablature.Tablature;
 import alphatab.tablature.ViewLayout;
+import alphatab.model.Barre;
 
 class StaveLine 
 {
@@ -103,7 +106,6 @@ class StaveLine
         {
             paintFeatures.push(0);
         }
-
         
         y = 0;
         x = 0;        
@@ -140,10 +142,9 @@ class StaveLine
             
             // stave background
             stave.paintStave(layout, context, x, posY);
-            
+
             // paint measures in this stave
             var currentMeasure:MeasureDrawing;
-            
             for (i in 0 ... measures.length) 
             {
                 var index:Int = measures[i];
@@ -152,6 +153,8 @@ class StaveLine
                 
                 stave.paintMeasure(layout, context, currentMeasure, x, posY);
             }
+
+            paintBarre(layout, context, stave, posY);
             
             posY += stave.spacing.getSize();
         }
@@ -212,4 +215,48 @@ class StaveLine
         //beatCount += currentMeasure.beatCount();
 
     }
+
+    private function paintBarre(layout:ViewLayout, context:DrawingContext,
+                                stave: Stave, posY:Int)
+    {
+        var barre:BarreDrawning = null;
+        var barres = new Array<BarreDrawning>();
+        var currentMeasure:MeasureDrawing;
+
+        function addBarre(barre: BarreDrawning){
+            if(barre!=null && barre.beats.length > 0){
+            barres.push(barre);
+            }
+        }
+
+        for (i in 0 ... measures.length)
+        {
+            var index:Int = measures[i];
+            currentMeasure = cast track.measures[index];
+
+            if(currentMeasure.hasBarre()){
+                for (beat in currentMeasure.beats){
+                    barre = (barre!=null) ? barre : new BarreDrawning();
+                    if (beat.properties.barre != null){
+                        barre.addBeat(beat);
+                    } else {
+                        addBarre(barre);
+                        barre = null;
+                    }
+                }
+            } else{
+                addBarre(barre);
+                barre = null;
+            }
+            // for full width barre in last measure
+            if (i == measures.length-1)
+                addBarre(barre);
+        }
+
+        for (b in barres){
+            stave.paintBarre(layout, context, b, x, posY);
+        }
+    }
+
+
 }

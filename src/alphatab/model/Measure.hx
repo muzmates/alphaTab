@@ -28,6 +28,8 @@ class Measure
     
     public var beats(default,default):Array<Beat>;
     public var header(default,default):MeasureHeader;
+
+    private var _hasBarre(default, default): Bool;
     
     public inline function beatCount() : Int
     {
@@ -99,6 +101,7 @@ class Measure
         this.header = header;
         clef = DEFAULT_CLEF;
         beats = new Array<Beat>();
+        _hasBarre = null;
     }
     
     public function addBeat(beat:Beat) : Void
@@ -121,6 +124,21 @@ class Measure
             return -1;
 
         return 0;
+    }
+
+    public function hasBarre(): Bool
+    {
+        if (_hasBarre != null)
+            return _hasBarre;
+
+        for (beat in beats){
+            if (beat.properties.barre != null){
+                _hasBarre = true;
+                return _hasBarre;
+            }
+        }
+        _hasBarre = false;
+        return _hasBarre;
     }
 
 }
