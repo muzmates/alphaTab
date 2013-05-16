@@ -42,6 +42,9 @@ class Duration
     
     public function time() : Int
     {
+        if(value == 0)
+            return 0;
+
         var time:Int = Math.floor(Duration.QUARTER_TIME * (4.0/value));
         if(isDotted)
         {
@@ -67,7 +70,8 @@ class Duration
     
     public function new(factory:SongFactory)
     {
-        value = Duration.QUARTER;
+        //value = Duration.QUARTER;
+        value = 0;
         isDotted = false;
         isDoubleDotted = false;
         tuplet = factory.newTuplet();
