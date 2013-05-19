@@ -16,6 +16,7 @@
  */
 package alphatab.tablature.staves;
 
+import alphatab.tablature.drawing.DrawingLayer;
 import alphatab.model.Direction;
 import alphatab.model.Duration;
 import alphatab.model.effects.GraceEffectTransition;
@@ -997,29 +998,79 @@ class ScoreStave extends Stave
     
     private function paintTiedNote(layout:ViewLayout, context:DrawingContext, note:NoteDrawing, x:Int, y:Int)
     {
-        var nextBeat:BeatDrawing = note.beatDrawing().getNextBeat();
-        var nextNote:NoteDrawing = nextBeat == null ? null : cast nextBeat.getNote(note.voice.index, note.string);
-        
-        if (nextNote != null && nextNote.isTiedNote)
-        {                
-            var fill:DrawingLayer = note.voice.index == 0
+        //var nextBeat:BeatDrawing = note.beatDrawing().getNextBeat();
+        var nextBeat:BeatDrawing = note.beatDrawing()
+                                       .getNextVoiceBeat(note.voice.index);
+
+        var nextNote:NoteDrawing = nextBeat == null
+                                 ? null :
+                                 cast nextBeat.getNote(note.voice.index,
+                                 note.string);
+
+        var multiVoice = note.measureDrawing().isMultiVoice();
+
+        var down: Bool = true;
+
+        if(multiVoice) {
+            if(note.voice.index == 0)
+                down = true;
+            else
+                down = false;
+        }
+        else {
+            down = (note.voiceDrawing().beatGroup.getDirection() ==
+                    VoiceDirection.Down);
+        }
+
+        var noteSize = Math.round(DrawingResources.getScoreNoteSize(
+                                  layout, false).x);
+        var noteOffset = Math.round((4 + layout.scale)*((!down) ? 1 : -1));
+        var lineWidth = line.width;
+
+        var fill:DrawingLayer = note.voice.index == 0
                                 ? context.get(DrawingLayers.VoiceEffects1)
                                 : context.get(DrawingLayers.VoiceEffects2);
-                
-            var down:Bool = (note.voiceDrawing().beatGroup.getDirection() == VoiceDirection.Down);
-            
-            var noteSize = Math.round(DrawingResources.getScoreNoteSize(layout, false).x);
-            var noteOffset = Math.round( (4 + layout.scale) * ((!down) ? 1 : -1));
-                                
-            var startY = y + spacing.get(ScoreMiddleLines) + getNoteScorePosY(layout, note) + noteOffset;
+
+        // Unresolved tie from previous line
+        if(note != null && !note.tieResolved) {
             var startX = x + (noteSize/2);
-            
-            var endX:Float = nextNote != null ? x + (note.beatDrawing().fullWidth() + noteSize / 2)
-                                                : startX + 15 * layout.scale;
-            var endY = nextNote != null ? y + spacing.get(ScoreMiddleLines) + getNoteScorePosY(layout, nextNote) + noteOffset
-                                : startY;
-                                                
-            TablatureStave.paintTie(layout, fill, startX, startY, endX, endY, !down);
+            var startY = y + spacing.get(ScoreMiddleLines) +
+                         getNoteScorePosY(layout, note) + noteOffset;
+
+            var m: MeasureDrawing = cast line.track.measures[0];
+            var endX: Float = line.x;
+
+            endX += m.calculateClefSpacing(layout);
+            endX += m.calculateKeySignatureSpacing(layout);
+
+            var endY = startY;
+
+            TablatureStave.paintTie(layout, fill, startX, startY,
+                                    endX, endY, !down);
+        }
+
+        else if (nextNote != null && nextNote.isTiedNote)
+        {
+            var nextX = nextBeat.fullX();
+            var startX = x + (noteSize/2);
+            var startY = y + spacing.get(ScoreMiddleLines) +
+                         getNoteScorePosY(layout, note) + noteOffset;
+            var beatWidth = note.beatDrawing().fullWidth();
+            var endX: Float = 0;
+            var endY = startY;
+
+            // Other tie end is on another line
+            if(nextNote.measureDrawing().number() >
+               note.measureDrawing().number() && nextX <= startX) {
+                endX = lineWidth * layout.scale + (noteSize/2);
+                nextNote.tieResolved = false;
+            }
+            else {
+                endX = nextBeat.fullX();
+            }
+
+            TablatureStave.paintTie(layout, fill, startX, startY,
+                                    endX, endY, !down);
         }
     }
     

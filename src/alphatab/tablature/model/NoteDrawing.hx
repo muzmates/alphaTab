@@ -32,7 +32,7 @@ class NoteDrawing extends Note
     // TODO: it isn't good we store stave specific data here, 
     public var scorePosY(default,default):Int;
     public var displaced(default,default):Bool;
-    
+
     public var accidental:Int;
     
     public function getAccitental()

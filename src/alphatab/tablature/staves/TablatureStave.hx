@@ -815,6 +815,7 @@ class TablatureStave extends Stave
     // paints a tie between the two given points
     public static function paintTie(layout:ViewLayout, layer:DrawingLayer, x1:Float, y1:Float, x2:Float, y2:Float, down:Bool=false) : Void
     {
+    /*
         //
         // calculate control points 
         //
@@ -826,21 +827,17 @@ class TablatureStave extends Stave
             y: (x2 - x1)
         }
         var length = Math.sqrt((normalVector.x*normalVector.x) + (normalVector.y * normalVector.y));
-        if(down) 
+        if(down) {
             normalVector.x *= -1;
-        else
+        }
+        else {
             normalVector.y *= -1;
+        }
         
         // make to unit vector
         normalVector.x /= length;
         normalVector.y /= length;
         
-        // center of connection
-        var center = {
-            x: (x2 + x1)/2,
-            y: (y2 + y1)/2
-        };
-       
         // control points
         var cp1 = {
             x: center.x + (offset*normalVector.x),
@@ -850,10 +847,23 @@ class TablatureStave extends Stave
             x: center.x + ((offset-size)*normalVector.x),
             y: center.y + ((offset-size)*normalVector.y)
         };
-        layer.startFigure();
-        layer.moveTo(x1, y1);
         layer.quadraticCurveTo(cp1.x, cp1.y, x2, y2);
         layer.quadraticCurveTo(cp2.x, cp2.y, x1, y1);
+        */
+
+        var offset = 7 * layout.scale;
+        // center of connection
+        var center = {
+           x: (x2 + x1)/2,
+           y: (y2 + y1)/2 - 20
+        };
+
+        if(down) offset *= -1;
+
+        layer.startFigure();
+        layer.moveTo(x1, y1);
+        layer.quadraticCurveTo(center.x, center.y, x2, y2);
+        layer.quadraticCurveTo(center.x, center.y+offset, x1, y1);
         layer.closeFigure();
     }
         

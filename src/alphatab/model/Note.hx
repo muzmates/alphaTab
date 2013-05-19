@@ -31,8 +31,8 @@ class Note
     public var voice(default,default):Voice;
     public var durationPercent(default,default):Float;
     public var swapAccidentals(default,default):Bool;
-    
-    
+    public var tieResolved(default,default):Bool;
+
     private var _realValue:Int;
     public function realValue() : Int
     {
@@ -52,6 +52,7 @@ class Note
         isTiedNote = false;
         swapAccidentals = false;
         effect = factory.newNoteEffect();
+        tieResolved = true;
     }
 
 }

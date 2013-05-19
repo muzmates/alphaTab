@@ -33,7 +33,7 @@ class BeatDrawing extends Beat
     public var x(default,default):Int;
     // the width of the beat
     public var width(default,default):Int;
-    
+
     // a boolean flag indicating whether the beat is the first one
     // within the current MeasureDrawing
     public function isFirstOfLine():Bool
@@ -70,7 +70,7 @@ class BeatDrawing extends Beat
     }
     
     private var _nextBeat:BeatDrawing;
-    private var _prevBeat:BeatDrawing;    
+    private var _prevBeat:BeatDrawing;
 
     public var minNote(default,default):NoteDrawing;
     public var maxNote(default,default):NoteDrawing;   
@@ -187,7 +187,34 @@ class BeatDrawing extends Beat
         }
         return _nextBeat;
     }
-    
+
+    // Find the next beat of the provided voice
+    public function getNextVoiceBeat(voiceIndex: Int): BeatDrawing
+    {
+        var m = measureDrawing();
+        var i = index + 1;
+        var res = null;
+
+        while(m != null) {
+            var len = m.beatCount();
+
+            while(i < len) {
+                var v = m.beats[i].voices[voiceIndex];
+
+                if(!v.isEmpty && v.beat != null) {
+                    return cast v.beat;
+                }
+
+                i++;
+            }
+
+            m = m.getNextMeasure();
+            i = 0;
+        }
+
+        return null;
+    }
+
     private function registerEffects(layout:ViewLayout)
     {
         var md:MeasureDrawing = measureDrawing();
