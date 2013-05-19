@@ -16,6 +16,7 @@
  */
 package alphatab.tablature.staves;
 
+import alphatab.tablature.model.BarreDrawning;
 import alphatab.tablature.model.VoiceDrawing;
 import alphatab.model.BeatStrokeDirection;
 import alphatab.model.Color;
@@ -228,6 +229,13 @@ class TablatureStave extends Stave
             paintCoda(layout, context, measure, realX, y);
 
         paintBeats(layout, context, measure, realX, y);
+    }
+
+    public override function paintBarre(layout:ViewLayout, context:DrawingContext, barre:BarreDrawning, x:Int, y:Int)
+    {
+        if(!this.bothStavesActive){
+           super.paintBarre(layout, context, barre, x, y);
+        }
     }
     
     private function paintClef(layout:ViewLayout, context:DrawingContext, measure:MeasureDrawing, x:Int, y:Int)

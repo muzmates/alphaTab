@@ -16,8 +16,10 @@
  */
 package alphatab.tablature.staves;
 
+import alphatab.tablature.model.BarreDrawning;
 import alphatab.model.Measure;
 import alphatab.model.Direction;
+import alphatab.model.Barre;
 import alphatab.tablature.drawing.DrawingContext;
 import alphatab.tablature.drawing.DrawingLayer;
 import alphatab.tablature.drawing.DrawingLayers;
@@ -101,6 +103,24 @@ class Stave
     public function paintMeasure(layout:ViewLayout, context:DrawingContext, measure:MeasureDrawing, x:Int, y:Int)
     {
         // for layouting requirements
+    }
+
+    public function paintBarre(layout:ViewLayout, context:DrawingContext, barre:BarreDrawning, x:Int, y:Int)
+    {
+        var startX:Float = x + barre.getStartX(layout);
+        var endX:Float = x + barre.getEndX(layout);
+        var realY:Float = y + 10*layout.scale;
+        var h = 8;
+        var draw:DrawingLayer = context.get(DrawingLayers.MainComponentsDraw);
+        var text:String = barre.getText();
+
+        context.graphics.font = DrawingResources.defaultFont;
+        var w:Float = context.graphics.measureText(text);
+
+        draw.addLine(endX, realY, endX, realY + h);
+        draw.addDashedLine(startX + w, realY, endX, realY);
+        context.get(DrawingLayers.MainComponentsDraw)
+        .addString(text, DrawingResources.defaultFont, startX, realY);
     }
     
     // paint division lines, measure numbers and repeat bars/endings

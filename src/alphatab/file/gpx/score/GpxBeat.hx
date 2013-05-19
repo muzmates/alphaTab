@@ -26,6 +26,9 @@ class GpxBeat
     public var rhythmId(default,default):Int;
     public var noteIds(default,default):Array<Int>;
     public var dyn(default,default):String;
+    // Barre
+    public var barreFret(default, default): Int;
+    public var barreString(default, default): Int;
     
     public function new()
     {

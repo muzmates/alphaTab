@@ -176,6 +176,7 @@ class DocumentReader
             for(masterBarNode in masterBarNodes)
             {
                 var masterBar = new GpxMasterBar();
+
                 masterBar.barIds = toIntArray(masterBarNode.node.Bars.innerData);
                 masterBar.time = toIntArray2(masterBarNode.node.Time.innerData, "/");
                 
@@ -258,7 +259,19 @@ class DocumentReader
                 {
                     beat.noteIds = [];
                 }
-                
+                if (beatNode.hasNode.Properties){
+                    var props = beatNode.node.Properties;
+                    for (prop in props.elements){
+                        if (prop.att.name == "BarreFret"){
+                            beat.barreFret =
+                            Std.parseInt(prop.node.Fret.innerData);
+                        }
+                        if (prop.att.name == "BarreString"){
+                            beat.barreString =
+                            Std.parseInt(prop.node.String.innerData);
+                        }
+                    }
+                }
                 _gpxDocument.beats.push(beat);
             }
         }

@@ -29,6 +29,7 @@ class Beat
     public var start(default,default):Int;
     public var effect(default,default):BeatEffect;
     public var index(default,default):Int;
+    public var properties(default, default): BeatProperties;
         
     public function isRestBeat() : Bool
     {
@@ -87,6 +88,7 @@ class Beat
         start = Duration.QUARTER_TIME;
         effect = factory.newBeatEffect();
         voices = new Array<Voice>();
+        properties = new BeatProperties();
         for(i in 0 ... Beat.MAX_VOICES)
         {
             var voice = factory.newVoice(i);

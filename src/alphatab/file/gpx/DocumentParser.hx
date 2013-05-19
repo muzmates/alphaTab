@@ -20,6 +20,7 @@
  */
 package alphatab.file.gpx;
 
+import alphatab.model.Barre;
 import alphatab.model.Direction;
 import alphatab.model.Marker;
 import alphatab.model.PageSetup;
@@ -190,9 +191,9 @@ class DocumentParser
             {
                 var track = song.tracks[t];
                 var measure = _factory.newMeasure(measureHeader);
-                
+                var barre: Barre = new Barre();
                 track.addMeasure(measure);
-                
+
                 var masterBarIndex = i;
                 var gpxBar = ( t < mbar.barIds.length ? _document.getBar(mbar.barIds[t]) : null);
                 while(gpxBar != null && gpxBar.simileMark != null)
@@ -222,6 +223,7 @@ class DocumentParser
                 {
                     parseBar(gpxBar, measure);
                 }
+
                 t++;
             }
             
@@ -251,6 +253,9 @@ class DocumentParser
                             var rhythm = _document.getRhythm(gpxBeat.rhythmId);
                             
                             var beat:Beat = getBeat(measure, start);
+
+                            parseBeatProperties(beat, gpxBeat);
+
                             var voice:Voice = beat.voices[v % beat.voices.length];
                             voice.isEmpty = false;
                             
@@ -418,7 +423,17 @@ class DocumentParser
         }
         return velocity;
     }
-    
+
+    private function parseBeatProperties(beat:Beat, gpxBeat:GpxBeat)
+    {
+        if (gpxBeat.barreFret != null){
+            var barre = new Barre();
+            barre.fret = gpxBeat.barreFret;
+            barre.string = gpxBeat.barreString;
+            beat.properties.barre = barre;
+        }
+    }
+
     private function getBeat(measure:Measure, start:Int)
     {
         var count = measure.beatCount();

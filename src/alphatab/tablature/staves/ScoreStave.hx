@@ -17,8 +17,10 @@
 package alphatab.tablature.staves;
 
 import alphatab.tablature.drawing.DrawingLayer;
+import alphatab.tablature.model.BarreDrawning;
 import alphatab.model.Direction;
 import alphatab.model.Duration;
+import alphatab.model.Barre;
 import alphatab.model.effects.GraceEffectTransition;
 import alphatab.model.MeasureClef;
 import alphatab.model.Note;
@@ -86,7 +88,7 @@ class ScoreStave extends Stave
     private static inline var ScoreMiddleLines = 10; // the default 5 lines visible by the score stave
     private static inline var ScoreBottomLines = 11; // additional space for extra lines below the stave
     private static inline var BottomPadding = 12;
-    
+
     private static inline var TimeSignaturePriority = 2;
 
     public function new(line:StaveLine, layout:ViewLayout)
@@ -160,7 +162,7 @@ class ScoreStave extends Stave
         {
             spacing.set(RepeatEnding, Math.floor(15 * layout.scale));
         }
-        
+
         var currentTopSpacing = spacing.spacing[ScoreTopLines];
         var middleLinesStart = spacing.get(ScoreMiddleLines);
         var middleLinesEnd = spacing.get(ScoreMiddleLines + 1);
@@ -246,7 +248,6 @@ class ScoreStave extends Stave
 
         paintTripletFeel(layout, context, measure, realX, y);
         paintMarker(layout, context, measure, realX, y);
-
         paintBeats(layout, context, measure, realX, y);
     }
     
