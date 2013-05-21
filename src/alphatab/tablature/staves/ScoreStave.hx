@@ -1001,7 +1001,6 @@ class ScoreStave extends Stave
     
     private function paintTiedNote(layout:ViewLayout, context:DrawingContext, note:NoteDrawing, x:Int, y:Int)
     {
-        //var nextBeat:BeatDrawing = note.beatDrawing().getNextBeat();
         var nextBeat:BeatDrawing = note.beatDrawing()
                                        .getNextVoiceBeat(note.voice.index);
 
@@ -1030,9 +1029,10 @@ class ScoreStave extends Stave
         var noteOffset = Math.round((4 + layout.scale)*((!down) ? 1 : -1));
         var lineWidth = line.width;
 
-        var fill:DrawingLayer = note.voice.index == 0
-                                ? context.get(DrawingLayers.VoiceEffects1)
-                                : context.get(DrawingLayers.VoiceEffects2);
+        var fill: DrawingLayer = getVoiceDrawing(note.voice.index,
+                                      context.get(DrawingLayers.VoiceEffects1),
+                                      context.get(DrawingLayers.VoiceEffects2)
+                                  );
 
         // Unresolved tie from previous line
         if(note != null && !note.tieResolved) {

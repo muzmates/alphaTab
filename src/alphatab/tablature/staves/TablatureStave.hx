@@ -823,47 +823,16 @@ class TablatureStave extends Stave
     // paints a tie between the two given points
     public static function paintTie(layout:ViewLayout, layer:DrawingLayer, x1:Float, y1:Float, x2:Float, y2:Float, down:Bool=false) : Void
     {
-    /*
-        //
-        // calculate control points 
-        //
-        var offset = 15*layout.scale;
-        var size = 4*layout.scale;
-        // normal vector
-        var normalVector = {
-            x: (y2 - y1),
-            y: (x2 - x1)
-        }
-        var length = Math.sqrt((normalVector.x*normalVector.x) + (normalVector.y * normalVector.y));
-        if(down) {
-            normalVector.x *= -1;
-        }
-        else {
-            normalVector.y *= -1;
-        }
-        
-        // make to unit vector
-        normalVector.x /= length;
-        normalVector.y /= length;
-        
-        // control points
-        var cp1 = {
-            x: center.x + (offset*normalVector.x),
-            y: center.y + (offset*normalVector.y)
-        }; 
-        var cp2 = {
-            x: center.x + ((offset-size)*normalVector.x),
-            y: center.y + ((offset-size)*normalVector.y)
-        };
-        layer.quadraticCurveTo(cp1.x, cp1.y, x2, y2);
-        layer.quadraticCurveTo(cp2.x, cp2.y, x1, y1);
-        */
-
         var offset = 7 * layout.scale;
+        var top = -20 * layout.scale;
+
+        if(down)
+            top *= -1;
+
         // center of connection
         var center = {
            x: (x2 + x1)/2,
-           y: (y2 + y1)/2 - 20
+           y: (y2 + y1)/2 + top
         };
 
         if(down) offset *= -1;
