@@ -97,7 +97,9 @@ class ScoreStave extends Stave
         spacing = new StaveSpacing(BottomPadding + 1);
         spacing.set(TopPadding, Math.floor(15 * layout.scale));
         spacing.set(ScoreTopPadding, Math.floor(18 * layout.scale));
-        spacing.set(ScoreMiddleLines, Math.floor(layout.scoreLineSpacing * 4));
+        spacing.set(ScoreTopLines, Math.floor(18 * layout.scale));
+        spacing.set(ScoreBottomLines, Math.floor(10 * layout.scale));
+        spacing.set(ScoreMiddleLines, Math.floor(4 * layout.scoreLineSpacing));
         spacing.set(BottomPadding, Math.floor(35 * layout.scale));
         
         line.setFeaturePaintPriority(StaveFeatures.TimeSignature, TimeSignaturePriority);

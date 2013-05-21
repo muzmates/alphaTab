@@ -107,9 +107,10 @@ class Stave
 
     public function paintBarre(layout:ViewLayout, context:DrawingContext, barre:BarreDrawning, x:Int, y:Int)
     {
+
         var startX:Float = x + barre.getStartX(layout);
         var endX:Float = x + barre.getEndX(layout);
-        var realY:Float = y + 10*layout.scale;
+        var realY:Float = y + getBarreY(layout, barre);
         var h = 8;
         var draw:DrawingLayer = context.get(DrawingLayers.MainComponentsDraw);
         var text:String = barre.getText();
@@ -121,6 +122,11 @@ class Stave
         draw.addDashedLine(startX + w, realY, endX, realY);
         context.get(DrawingLayers.MainComponentsDraw)
         .addString(text, DrawingResources.defaultFont, startX, realY);
+    }
+
+    private function getBarreY(layout:ViewLayout, barre:BarreDrawning): Int
+    {
+        return Math.floor(5*layout.scale);
     }
     
     // paint division lines, measure numbers and repeat bars/endings
