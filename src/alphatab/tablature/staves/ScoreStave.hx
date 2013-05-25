@@ -819,15 +819,17 @@ class ScoreStave extends Stave
         
         // paint group if group is full and is first of group
         //  otherwise only a number
-        var previousVoice = voice.getPreviousVoice();
+        var previousVoice = voice.getPreviousVoiceWithNotes();
+
         if (voice.tripletGroup.isFull() && 
             (previousVoice == null || previousVoice.tripletGroup == null || previousVoice.tripletGroup != voice.tripletGroup) )
         {
             var firstVoice = voice.tripletGroup.voices[0];
             var lastVoice = voice.tripletGroup.voices[voice.tripletGroup.voices.length -1];
-            
-            var startX = firstVoice.beatDrawing().fullX();
-            var endX = lastVoice.beatDrawing().fullX();
+
+            var xOffset = voice.beatDrawing().minNote.noteSize.x;
+            var startX = firstVoice.beatDrawing().fullX() + xOffset;
+            var endX = lastVoice.beatDrawing().fullX() + xOffset;
             
             var direction:Int = voice.isRestVoice() ? VoiceDirection.Up : voice.beatGroup.getDirection();
             

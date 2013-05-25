@@ -63,13 +63,13 @@ class VoiceDrawing extends Voice
     {
         return beatDrawing().measureDrawing();
     }
-    
+
     public function new(factory:SongFactory, index:Int)
     {
         super(factory, index);
         effectsCache = new EffectsCache();
     }
-    
+
     public function getPreviousVoice() : VoiceDrawing
     {
          var previousBeat = beatDrawing().getPreviousBeat();
@@ -79,6 +79,21 @@ class VoiceDrawing extends Voice
             
         return previousBeat != null ? cast previousBeat.voices[index] : null;
     }
+
+    public function getPreviousVoiceWithNotes(): VoiceDrawing
+    {
+        var previousBeat = beatDrawing().getPreviousBeat();
+        var voice:VoiceDrawing = null;
+
+        while((voice == null || voice.isEmpty ) && previousBeat != null)
+        {
+            voice = cast previousBeat.voices[index];
+            previousBeat = previousBeat.getPreviousBeat();
+        }
+
+        return voice;
+    }
+
     
     public function getNextVoice() : VoiceDrawing
     {
@@ -88,6 +103,20 @@ class VoiceDrawing extends Voice
             return null;
             
         return previousBeat != null ? cast previousBeat.voices[index] : null;
+    }
+
+    public function getNextVoiceWithNotes(): VoiceDrawing
+    {
+        var nextBeat = beatDrawing().getNextBeat();
+        var voice:VoiceDrawing = null;
+
+        while((voice == null || voice.isEmpty) && nextBeat != null)
+        {
+            voice = cast nextBeat.voices[index];
+            nextBeat = nextBeat.getNextBeat();
+        }
+
+        return voice;
     }
     
     public var minNote(default,default):NoteDrawing;
@@ -128,6 +157,7 @@ class VoiceDrawing extends Voice
     
     public function performLayout(layout:ViewLayout)
     {
+
         // get default voice width provided by the layout
         width = layout.getVoiceWidth(this);
         effectsCache.reset();
@@ -154,9 +184,9 @@ class VoiceDrawing extends Voice
         {
             width += Math.floor(DrawingResources.getScoreNoteSize(layout, false).x);
         }
-        
-        var previousVoice = getPreviousVoice();
-        var nextVoice = getNextVoice();
+
+        var previousVoice = getPreviousVoiceWithNotes();
+        var nextVoice = getNextVoiceWithNotes();
         
         // check for joins with previous / next beat 
         var noteJoined:Bool = false;
@@ -183,6 +213,7 @@ class VoiceDrawing extends Voice
             {
                 isJoinedGreaterThanQuarter = true;
             }
+
         }
         
         if (BeatGroup.canJoin(this, nextVoice))
@@ -208,7 +239,7 @@ class VoiceDrawing extends Voice
         {
             joinedType = JoinedType.NoneLeft;
         }
-        
+
         // create beat group
         if (!isRestVoice())
         {            
@@ -246,7 +277,7 @@ class VoiceDrawing extends Voice
             // ignore previous beat if it is not in the same line
             if (previousVoice != null && previousVoice.measureDrawing().staveLine != measureDrawing().staveLine)
                 previousVoice == null;
-                
+
             if (previousVoice == null || previousVoice.tripletGroup == null || !previousVoice.tripletGroup.check(this))
             {            
                 tripletGroup = new TripletGroup(index);
