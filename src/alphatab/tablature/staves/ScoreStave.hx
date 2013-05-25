@@ -901,7 +901,6 @@ class ScoreStave extends Stave
             }
         }
         
-        
         // draw accidental
         // TODO: validate accidentals 
         // TODO: try to place accidentals side-by-side if there is not enough space 

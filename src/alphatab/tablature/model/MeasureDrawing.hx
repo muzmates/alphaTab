@@ -471,6 +471,11 @@ class MeasureDrawing extends Measure
                 multiVoice = true;
                 break;
             }
+
+            if(!beat.voices[0].isRestVoice() && !beat.voices[1].isRestVoice()) {
+                multiVoice = true;
+                break;
+            }
         }
 
         return multiVoice;
