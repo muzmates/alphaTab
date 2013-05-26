@@ -473,7 +473,12 @@ class ScoreStave extends Stave
         for (beat in measure.beats)
         {
             var bd:BeatDrawing = cast beat;
+            var isGrace = false;
+            for (v in beat.voices){
+                isGrace = v.isGrace || isGrace;
+            }
             paintBeat(layout, context, bd, x + bd.x, y, multiVoice);
+
             //x += bd.fullWidth();
         }
     }
@@ -564,9 +569,11 @@ class ScoreStave extends Stave
                               multiVoice, x, y);
                 }
             }
-            
-            paintBeam(layout, context, voice, voiceIndex, multiVoice, x, y);
-            paintTriplet(layout, context, voice, x, y);
+
+            if(!voice.isGrace){
+                paintBeam(layout, context, voice, voiceIndex, multiVoice, x, y);
+                paintTriplet(layout, context, voice, x, y, voiceIndex, multiVoice);
+            }
         }
     }
     
@@ -616,7 +623,7 @@ class ScoreStave extends Stave
         paintDottedNote(layout, context, voice, false, x, y);
     }
         
-    private function paintBeam(layout:ViewLayout,
+    private function  paintBeam(layout:ViewLayout,
                                context:DrawingContext,
                                voice:VoiceDrawing,
                                voiceIndex: Int,
@@ -711,7 +718,6 @@ class ScoreStave extends Stave
                         
                         var hY1:Int = Math.floor(y + yMove + calculateBeamY(layout, voice.beatGroup, direction, startXforCalculation, key, clef));
                         var hY2:Int = Math.floor(y + yMove + calculateBeamY(layout, voice.beatGroup, direction, endXforCalculation, key, clef));
-                        
                         NotePainter.paintBar(fill, startX, hY1, endX, hY2, index, rotation, layout.scale);
                     }
                 }
@@ -803,7 +809,9 @@ class ScoreStave extends Stave
     
    
     
-    private function paintTriplet(layout:ViewLayout, context:DrawingContext, voice:VoiceDrawing, x:Int, y:Int)
+    private function paintTriplet(layout:ViewLayout, context:DrawingContext,
+                                  voice:VoiceDrawing, x:Int, y:Int,
+                                  voiceIndex:Int, multiVoice:Bool)
     {
         if (voice.duration.tuplet.equals(Tuplet.NORMAL)) return;
 
@@ -817,42 +825,65 @@ class ScoreStave extends Stave
             context.get(DrawingLayers.VoiceDraw1),
             context.get(DrawingLayers.VoiceDraw2));
 
-        y += spacing.get(Triplet);
+        y += spacing.get(ScoreMiddleLines);
         
         // paint group if group is full and is first of group
         //  otherwise only a number
-        var previousVoice = voice.getPreviousVoice();
+        var previousVoice = voice.getPreviousVoiceWithNotes();
+
         if (voice.tripletGroup.isFull() && 
             (previousVoice == null || previousVoice.tripletGroup == null || previousVoice.tripletGroup != voice.tripletGroup) )
         {
             var firstVoice = voice.tripletGroup.voices[0];
             var lastVoice = voice.tripletGroup.voices[voice.tripletGroup.voices.length -1];
-            
+
+            var key:Int = voice.beat.measure.keySignature();
+            var clef:Int = voice.beat.measure.clef;
+            var direction:Int = null;
+
+            if(multiVoice)
+                direction = voiceIndex == 0 ? VoiceDirection.Up : VoiceDirection.Down;
+            else
+                direction = voice.beatGroup.getDirection();
+
+            var h = spacing.spacing[Triplet];
+            var lineSpace = h + 4*layout.scale;
+            var yMove:Float = direction == VoiceDirection.Up ?
+            Math.round(layout.scoreLineSpacing / 3) + 1 - lineSpace :
+            Math.round(layout.scoreLineSpacing / 3) * 2 + lineSpace;
+
+            var startXforCalculation = firstVoice.beatDrawing().fullX();
+            var endXforCalculation = lastVoice.beatDrawing().fullX();
+
+            var startY:Int = Math.floor(y + yMove + calculateBeamY(layout, voice.beatGroup, direction, startXforCalculation, key, clef));
+            var endY:Int = Math.floor(y + yMove + calculateBeamY(layout, voice.beatGroup, direction, endXforCalculation, key, clef));
             var startX = firstVoice.beatDrawing().fullX();
             var endX = lastVoice.beatDrawing().fullX();
-            
-            var direction:Int = voice.isRestVoice() ? VoiceDirection.Up : voice.beatGroup.getDirection();
-            
+
             if (direction == VoiceDirection.Up)
             {
-                var offset = Math.floor(DrawingResources.getScoreNoteSize(layout, false).x);
+                var offset = Math.round(DrawingResources.getScoreNoteSize(
+                    layout, false).x);
                 startX += offset;
                 endX += offset;
             }
-                    
-            var lineW = endX - startX;
-            
-            var h = spacing.spacing[Triplet];
-            
+
             var s:String = Std.string(voice.tripletGroup.triplet);
             context.graphics.font = DrawingResources.effectFont;
             var w:Float = context.graphics.measureText(s);
-                        
-            draw.addLine(startX, y + h, startX, y);
-            draw.addLine(startX, y, startX + (lineW / 2) - w , y);
-            draw.addString(s, DrawingResources.effectFont,  startX + ((lineW - w)/ 2), y);
-            draw.addLine(startX + (lineW/2) + w , y, endX, y);
-            draw.addLine(endX, y + h, endX, y);
+
+            function pointY(xArg:Float): Float{
+                return (xArg - startX)*(endY - startY) / (endX - startX) + startY;
+            }
+
+            draw.addLine(startX, startY, startX, startY+h);
+            var tmpEndX = startX + ((endX - startX) / 2) - w;
+            draw.addLine(startX, startY, tmpEndX, pointY(tmpEndX));
+            draw.addString(s, DrawingResources.effectFont, tmpEndX, pointY(tmpEndX));
+            tmpEndX = tmpEndX + w;
+            draw.addLine(tmpEndX, pointY(tmpEndX), endX, endY);
+            draw.addLine(endX, endY, endX, endY+h);
+
         }
         else if(!voice.tripletGroup.isFull())
         {
@@ -866,7 +897,8 @@ class ScoreStave extends Stave
                                voiceIndex: Int,
                                multiVoice: Bool,
                                x:Int, y:Int)
-    {   
+    {
+
         var noteHeadY = y + spacing.get(ScoreMiddleLines) + getNoteScorePosY(layout, note);
         var noteHeadX = x;
 
@@ -888,7 +920,7 @@ class ScoreStave extends Stave
         else
             direction = note.voiceDrawing().beatGroup.getDirection();
 
-        var displaceOffset:Int = Math.floor(DrawingResources.getScoreNoteSize(layout, false).x); 
+        var displaceOffset:Int = Math.floor(DrawingResources.getScoreNoteSize(layout, false).x);
         if (note.displaced)
         {
             if (direction == VoiceDirection.Up)
@@ -901,6 +933,37 @@ class ScoreStave extends Stave
             }
         }
 
+        if (note.effect.isGrace())
+        {
+            paintGraceNote(layout,context, note, x ,noteHeadY);
+            var realX:Float = x - (10 * layout.scale);
+            // draw accidental
+            // TODO: validate accidentals
+            // TODO: try to place accidentals side-by-side if there is not enough space
+            if(!note.measureDrawing().track.isPercussionTrack)
+            {
+                var accidentalX:Int = cast realX - Math.floor(11 * layout.scale);
+                if (note.voiceDrawing().anyDisplaced && direction == VoiceDirection.Down)
+                {
+                    accidentalX -= displaceOffset;
+                }
+                var accidentalY:Int = cast (noteHeadY + 4 * layout.scale);
+
+                if (note.getAccitental() == MeasureDrawing.NATURAL)
+                {
+                    KeySignaturePainter.paintSmallNatural(fill, accidentalX, accidentalY , layout, layout.scale*0.8);
+                }
+                else if (note.getAccitental() == MeasureDrawing.SHARP)
+                {
+                    KeySignaturePainter.paintSmallSharp(fill, accidentalX, accidentalY, layout, layout.scale*0.8);
+                }
+                else if (note.getAccitental() == MeasureDrawing.FLAT)
+                {
+                    KeySignaturePainter.paintSmallFlat(fill, accidentalX, accidentalY, layout, layout.scale*0.8);
+                }
+            }
+        }
+        else {
         // draw accidental
         // TODO: validate accidentals 
         // TODO: try to place accidentals side-by-side if there is not enough space 
@@ -916,15 +979,15 @@ class ScoreStave extends Stave
             
             if (note.getAccitental() == MeasureDrawing.NATURAL)
             { 
-                KeySignaturePainter.paintSmallNatural(fill, accidentalX, accidentalY , layout);
+                KeySignaturePainter.paintSmallNatural(fill, accidentalX, accidentalY , layout, layout.scale);
             }
             else if (note.getAccitental() == MeasureDrawing.SHARP)
             {
-                KeySignaturePainter.paintSmallSharp(fill, accidentalX, accidentalY, layout);
+                KeySignaturePainter.paintSmallSharp(fill, accidentalX, accidentalY, layout, layout.scale);
             }
             else if (note.getAccitental() == MeasureDrawing.FLAT)
             {
-                KeySignaturePainter.paintSmallFlat(fill, accidentalX, accidentalY, layout);
+                KeySignaturePainter.paintSmallFlat(fill, accidentalX, accidentalY, layout, layout.scale);
             }
         }
 
@@ -949,6 +1012,7 @@ class ScoreStave extends Stave
         }
                 
         paintEffects(layout, context, note, noteHeadX, y, noteHeadY);
+        }
     }
     
     private function getNoteScorePosY(layout:ViewLayout, note:NoteDrawing) : Int
@@ -1133,7 +1197,7 @@ class ScoreStave extends Stave
     private function paintHammerOn(layout:ViewLayout, context:DrawingContext, note:NoteDrawing, x:Int, y:Int)
     {
         if (!note.effect.hammer) return;
-        
+
         var nextBeat:BeatDrawing = note.beatDrawing().getNextBeat();
         var nextNote:NoteDrawing = nextBeat == null ? null : cast nextBeat.getNote(note.voice.index, note.string);
                 
@@ -1211,8 +1275,11 @@ class ScoreStave extends Stave
         
         var scale:Float = layout.scoreLineSpacing / 2.25;
         var realX:Float = x - (10 * layout.scale);
-        var realY:Float = y - (9 * layout.scale);
-        var fill:DrawingLayer = note.voice.index == 0 ? context.get(DrawingLayers.VoiceEffects1) : context.get(DrawingLayers.VoiceEffects2);
+        //TODO: add half of the line spacing, because of bug in displaying. Wrong decision?
+        var realY:Float = y - (9 * layout.scale) - layout.scoreLineSpacing/2;
+        var fill:DrawingLayer = note.voice.index == 0 ?
+        context.get(DrawingLayers.VoiceEffects1) :
+        context.get(DrawingLayers.VoiceEffects2);
         
         if (note.effect.deadNote)
         {

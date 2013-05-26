@@ -141,6 +141,9 @@ class BeatDrawing extends Beat
             {
                 voice.performLayout(layout);                
                 width = cast Math.max(width, voice.width);
+                if (isGrace) {
+                    width = 0;
+                }
             }
             effectsCache.fingering = cast Math.max(effectsCache.fingering, voice.effectsCache.fingering);
         }      

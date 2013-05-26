@@ -29,9 +29,10 @@ class GpxBeat
     // Barre
     public var barreFret(default, default): Int;
     public var barreString(default, default): Int;
-
     public var arpeggio(default, default): String;
-    
+    // Grace
+    public var grace(default, default): String;
+
     public function new()
     {
         

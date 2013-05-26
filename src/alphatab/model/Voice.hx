@@ -27,6 +27,7 @@ class Voice
     public var index(default,default):Int;
     public var direction(default,default):Int;
     public var isEmpty(default,default):Bool;
+    public var isGrace(default, default):Bool;
     
     public function isRestVoice() : Bool
     {
@@ -40,6 +41,7 @@ class Voice
         this.index = index;
         direction = VoiceDirection.None;
         isEmpty = true;
+        isGrace = false;
     }
     
     public function addNote(note:Note) : Void
@@ -47,6 +49,7 @@ class Voice
         note.voice = this;
         this.notes.push(note);
         isEmpty = false;
+        isGrace = note.effect.isGrace() || isGrace;
     }
 
 }

@@ -44,22 +44,21 @@ class KeySignaturePainter
         layer.addMusicSymbol(MusicFont.KeySharp, x, y, scale);
     }    
     
-    public static function paintSmallFlat(layer:DrawingLayer, x:Float, y:Float, layout:ViewLayout)
+    public static function paintSmallFlat(layer:DrawingLayer, x:Float, y:Float, layout:ViewLayout, scale)
     {
         y -= layout.scoreLineSpacing;
-        var scale:Float = layout.scale;
         layer.addMusicSymbol(MusicFont.KeyFlat, x, y, scale);
     }
-    public static function paintSmallNatural(layer:DrawingLayer, x:Float, y:Float, layout:ViewLayout)
+
+    public static function paintSmallNatural(layer:DrawingLayer, x:Float, y:Float, layout:ViewLayout, scale:Float)
     {
         y -= layout.scoreLineSpacing;
-        var scale:Float = layout.scale;
         layer.addMusicSymbol(MusicFont.KeyNormal, x, y, scale);
     }
-    public static function paintSmallSharp(layer:DrawingLayer, x:Float, y:Float, layout:ViewLayout)
+    public static function paintSmallSharp(layer:DrawingLayer, x:Float, y:Float, layout:ViewLayout, scale:Float)
     {
-        var scale:Float = layout.scale;
         y -= Math.round(1 * layout.scoreLineSpacing);
         layer.addMusicSymbol(MusicFont.KeySharp, x, y, scale);
     }
+
 }

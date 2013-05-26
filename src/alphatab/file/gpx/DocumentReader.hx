@@ -251,6 +251,9 @@ class DocumentReader
                 beat.id = Std.parseInt(beatNode.att.id);
                 beat.dyn = beatNode.node.Dynamic.innerData;
                 beat.rhythmId = Std.parseInt(beatNode.node.Rhythm.att.ref);
+                if (beatNode.hasNode.GraceNotes){
+                    beat.grace = beatNode.node.GraceNotes.innerData;
+                }
                 if (beatNode.hasNode.Notes)
                 {
                     beat.noteIds = toIntArray(beatNode.node.Notes.innerData);
@@ -374,6 +377,11 @@ class DocumentReader
                 _gpxDocument.rhythms.push(rhythm);
             }
         }
+    }
+
+    public function readGrace()
+    {
+
     }
     
 }
