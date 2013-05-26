@@ -15,6 +15,7 @@
  *  along with alphaTab.  If not, see <http://www.gnu.org/licenses/>.
  */
 package alphatab.tablature.model;
+import alphatab.model.BeatArpeggio;
 import alphatab.model.BeatArpeggioDirection;
 import alphatab.model.Beat;
 import alphatab.model.BeatStrokeDirection;
@@ -58,7 +59,12 @@ class BeatDrawing extends Beat
     public function fullX() : Int
     {
         var layout:ViewLayout = measureDrawing().staveLine.tablature.viewLayout;
-        return measureDrawing().staveLine.x + measureDrawing().x + measureDrawing().getDefaultSpacings(layout) + x;
+        var r = measureDrawing().staveLine.x + measureDrawing().x + measureDrawing().getDefaultSpacings(layout) + x;
+
+        if(effectsCache.arpeggio)
+            r += BeatArpeggio.size(layout);
+
+        return r;
     }
     
 #if cpp

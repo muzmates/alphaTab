@@ -16,6 +16,7 @@
  */
 package alphatab.tablature.staves;
 
+import alphatab.model.BeatArpeggio;
 import alphatab.tablature.model.BeatDrawing;
 import alphatab.tablature.model.BarreDrawning;
 import alphatab.model.Measure;
@@ -362,8 +363,7 @@ class Stave
         if (beat.effect.arpeggio.direction == BeatArpeggioDirection.None)
             return 0;
 
-        var offset = Math.floor(DrawingResources.getScoreNoteSize(layout,
-                                true).x);
+        var offset = BeatArpeggio.size(layout);
 
         for(i in beat.voices) {
             var v: VoiceDrawing = cast i;

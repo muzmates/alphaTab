@@ -16,6 +16,9 @@
  */
 package alphatab.model;
 
+import alphatab.tablature.ViewLayout;
+import alphatab.tablature.drawing.DrawingResources;
+
 /**
  * An arpeggio effect on beats
  */
@@ -26,5 +29,9 @@ class BeatArpeggio
     public function new()
     {
         direction = BeatArpeggioDirection.None;
+    }
+
+    public static function size(layout: ViewLayout): Int {
+        return Math.floor(DrawingResources.getScoreNoteSize(layout, true).x);
     }
 }

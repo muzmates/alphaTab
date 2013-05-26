@@ -15,6 +15,7 @@
  *  along with alphaTab.  If not, see <http://www.gnu.org/licenses/>.
  */
 package alphatab.tablature.model;
+import alphatab.model.BeatArpeggio;
 import alphatab.model.Duration;
 import alphatab.model.Note;
 import alphatab.model.SongFactory;
@@ -186,8 +187,7 @@ class VoiceDrawing extends Voice
         }
 
         if(beatDrawing().effectsCache.arpeggio)
-            width += Math.floor(DrawingResources.getScoreNoteSize(layout,
-                                true).x);
+            width += BeatArpeggio.size(layout);
 
         var previousVoice = getPreviousVoiceWithNotes();
         var nextVoice = getNextVoiceWithNotes();
