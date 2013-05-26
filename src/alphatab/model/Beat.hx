@@ -19,6 +19,7 @@ package alphatab.model;
 /**
  * A beat contains multiple voices. 
  */
+
 class Beat
 {
     public static inline var MAX_VOICES:Int = 2;
@@ -30,6 +31,8 @@ class Beat
     public var effect(default,default):BeatEffect;
     public var index(default,default):Int;
     public var properties(default, default): BeatProperties;
+    public var isGrace(getIsGrace, null): Bool;
+    private var _isGrace(default, default): Bool;
         
     public function isRestBeat() : Bool
     {
@@ -40,6 +43,17 @@ class Beat
                 return false;
         }
         return true;
+    }
+
+    private function getIsGrace(): Bool
+    {
+        if (_isGrace == null){
+            _isGrace = false;
+            for (v in voices){
+                _isGrace = v.isGrace || _isGrace;
+            }
+        }
+        return _isGrace;
     }
     
     public function getRealStart() : Int
@@ -89,6 +103,7 @@ class Beat
         effect = factory.newBeatEffect();
         voices = new Array<Voice>();
         properties = new BeatProperties();
+        isGrace = false;
         for(i in 0 ... Beat.MAX_VOICES)
         {
             var voice = factory.newVoice(i);

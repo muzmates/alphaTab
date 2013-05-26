@@ -20,6 +20,8 @@
  */
 package alphatab.file.gpx;
 
+import alphatab.model.effects.GraceEffectTransition;
+import alphatab.tablature.model.BeatDrawing;
 import alphatab.model.Barre;
 import alphatab.model.Direction;
 import alphatab.model.Marker;
@@ -270,7 +272,7 @@ class DocumentParser
                                     var gpxNote = _document.getNote(gpxBeat.noteIds[n]);
                                     if(gpxNote != null)
                                     {
-                                        parseNote(gpxNote, voice, velocity);
+                                        parseNote(gpxNote, voice, velocity, gpxBeat.grace);
                                     }
                                     n++;
                                 }
@@ -285,8 +287,9 @@ class DocumentParser
             v++;
         }
     }
-    
-    private function parseNote(gpxNote:GpxNote, voice:Voice, velocity:Int)
+
+    private function parseNote(gpxNote:GpxNote, voice:Voice, velocity:Int,
+                               grace: String)
     {
         var value = -1;
         var string = -1;
@@ -342,6 +345,17 @@ class DocumentParser
             note.effect.slide = gpxNote.slide;
             note.effect.deadNote = gpxNote.mutedEnabled;
             note.effect.palmMute = gpxNote.palmMutedEnabled;
+
+            if (grace != null){
+                var graceEffect = _factory.newGraceEffect();
+                graceEffect.isOnBeat = grace == "OnBeat";
+                graceEffect.fret = value;
+                graceEffect.isDead = note.effect.deadNote;
+                graceEffect.velocity = note.velocity;
+                graceEffect.duration = voice.duration.value;
+                //graceEffect.transition = GraceEffectTransition.Slide;
+                note.effect.grace = graceEffect;
+            };
             
             voice.addNote(note);
         }

@@ -473,7 +473,12 @@ class ScoreStave extends Stave
         for (beat in measure.beats)
         {
             var bd:BeatDrawing = cast beat;
+            var isGrace = false;
+            for (v in beat.voices){
+                isGrace = v.isGrace || isGrace;
+            }
             paintBeat(layout, context, bd, x + bd.x, y, multiVoice);
+
             //x += bd.fullWidth();
         }
     }
@@ -562,9 +567,11 @@ class ScoreStave extends Stave
                               multiVoice, x, y);
                 }
             }
-            
-            paintBeam(layout, context, voice, voiceIndex, multiVoice, x, y);
-            paintTriplet(layout, context, voice, x, y, voiceIndex, multiVoice);
+
+            if(!voice.isGrace){
+                paintBeam(layout, context, voice, voiceIndex, multiVoice, x, y);
+                paintTriplet(layout, context, voice, x, y, voiceIndex, multiVoice);
+            }
         }
     }
     
@@ -888,7 +895,8 @@ class ScoreStave extends Stave
                                voiceIndex: Int,
                                multiVoice: Bool,
                                x:Int, y:Int)
-    {   
+    {
+
         var noteHeadY = y + spacing.get(ScoreMiddleLines) + getNoteScorePosY(layout, note);
         var noteHeadX = x;
 
@@ -910,7 +918,7 @@ class ScoreStave extends Stave
         else
             direction = note.voiceDrawing().beatGroup.getDirection();
 
-        var displaceOffset:Int = Math.floor(DrawingResources.getScoreNoteSize(layout, false).x); 
+        var displaceOffset:Int = Math.floor(DrawingResources.getScoreNoteSize(layout, false).x);
         if (note.displaced)
         {
             if (direction == VoiceDirection.Up)
@@ -922,6 +930,38 @@ class ScoreStave extends Stave
                 noteHeadX -= displaceOffset;
             }
         }
+
+        if (note.effect.isGrace())
+        {
+            paintGraceNote(layout,context, note, x ,noteHeadY);
+            var realX:Float = x - (10 * layout.scale);
+            // draw accidental
+            // TODO: validate accidentals
+            // TODO: try to place accidentals side-by-side if there is not enough space
+            if(!note.measureDrawing().track.isPercussionTrack)
+            {
+                var accidentalX:Int = cast realX - Math.floor(11 * layout.scale);
+                if (note.voiceDrawing().anyDisplaced && direction == VoiceDirection.Down)
+                {
+                    accidentalX -= displaceOffset;
+                }
+                var accidentalY:Int = cast (noteHeadY + 4 * layout.scale);
+
+                if (note.getAccitental() == MeasureDrawing.NATURAL)
+                {
+                    KeySignaturePainter.paintSmallNatural(fill, accidentalX, accidentalY , layout, layout.scale*0.8);
+                }
+                else if (note.getAccitental() == MeasureDrawing.SHARP)
+                {
+                    KeySignaturePainter.paintSmallSharp(fill, accidentalX, accidentalY, layout, layout.scale*0.8);
+                }
+                else if (note.getAccitental() == MeasureDrawing.FLAT)
+                {
+                    KeySignaturePainter.paintSmallFlat(fill, accidentalX, accidentalY, layout, layout.scale*0.8);
+                }
+            }
+        }
+        else {
         
         // draw accidental
         // TODO: validate accidentals 
@@ -937,15 +977,15 @@ class ScoreStave extends Stave
             
             if (note.getAccitental() == MeasureDrawing.NATURAL)
             { 
-                KeySignaturePainter.paintSmallNatural(fill, accidentalX, accidentalY , layout);
+                KeySignaturePainter.paintSmallNatural(fill, accidentalX, accidentalY , layout, layout.scale);
             }
             else if (note.getAccitental() == MeasureDrawing.SHARP)
             {
-                KeySignaturePainter.paintSmallSharp(fill, accidentalX, accidentalY, layout);
+                KeySignaturePainter.paintSmallSharp(fill, accidentalX, accidentalY, layout, layout.scale);
             }
             else if (note.getAccitental() == MeasureDrawing.FLAT)
             {
-                KeySignaturePainter.paintSmallFlat(fill, accidentalX, accidentalY, layout);
+                KeySignaturePainter.paintSmallFlat(fill, accidentalX, accidentalY, layout, layout.scale);
             }
         }
 
@@ -970,6 +1010,7 @@ class ScoreStave extends Stave
         }
                 
         paintEffects(layout, context, note, noteHeadX, y, noteHeadY);
+        }
     }
     
     private function getNoteScorePosY(layout:ViewLayout, note:NoteDrawing) : Int
@@ -1154,7 +1195,7 @@ class ScoreStave extends Stave
     private function paintHammerOn(layout:ViewLayout, context:DrawingContext, note:NoteDrawing, x:Int, y:Int)
     {
         if (!note.effect.hammer) return;
-        
+
         var nextBeat:BeatDrawing = note.beatDrawing().getNextBeat();
         var nextNote:NoteDrawing = nextBeat == null ? null : cast nextBeat.getNote(note.voice.index, note.string);
                 
@@ -1232,8 +1273,11 @@ class ScoreStave extends Stave
         
         var scale:Float = layout.scoreLineSpacing / 2.25;
         var realX:Float = x - (10 * layout.scale);
-        var realY:Float = y - (9 * layout.scale);
-        var fill:DrawingLayer = note.voice.index == 0 ? context.get(DrawingLayers.VoiceEffects1) : context.get(DrawingLayers.VoiceEffects2);
+        //TODO: add half of the line spacing, because of bug in displaying. Wrong decision?
+        var realY:Float = y - (9 * layout.scale) - layout.scoreLineSpacing/2;
+        var fill:DrawingLayer = note.voice.index == 0 ?
+        context.get(DrawingLayers.VoiceEffects1) :
+        context.get(DrawingLayers.VoiceEffects2);
         
         if (note.effect.deadNote)
         {
