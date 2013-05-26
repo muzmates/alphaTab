@@ -22,6 +22,7 @@ import alphatab.model.effects.BendEffect;
  */
 class BeatEffect 
 {
+    public var arpeggio(default,default):BeatArpeggio;
     public var stroke(default,default):BeatStroke;
     public var hasRasgueado(default,default):Bool;
 
@@ -33,7 +34,6 @@ class BeatEffect
         return this.chord != null;
     }
     
-
     public var fadeIn(default,default):Bool;
     public var vibrato(default,default):Bool;
     
@@ -42,7 +42,6 @@ class BeatEffect
     {
         return this.tremoloBar != null;
     }
-    
 
     public var mixTableChange(default,default):MixTableChange;
     
@@ -57,6 +56,7 @@ class BeatEffect
         popping = false;
         fadeIn = false;        
         stroke = factory.newStroke();
+        arpeggio = factory.newArpeggio();
     }
     
 }

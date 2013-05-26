@@ -154,7 +154,11 @@ class VoiceDrawing extends Voice
         {
             width += Math.floor(DrawingResources.getScoreNoteSize(layout, false).x);
         }
-        
+
+        if(beatDrawing().effectsCache.arpeggio)
+            width += Math.floor(DrawingResources.getScoreNoteSize(layout,
+                                true).x);
+
         var previousVoice = getPreviousVoice();
         var nextVoice = getNextVoice();
         

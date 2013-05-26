@@ -15,6 +15,7 @@
  *  along with alphaTab.  If not, see <http://www.gnu.org/licenses/>.
  */
 package alphatab.tablature.model;
+import alphatab.model.BeatArpeggioDirection;
 import alphatab.model.Beat;
 import alphatab.model.BeatStrokeDirection;
 import alphatab.model.effects.BendPoint;
@@ -229,6 +230,13 @@ class BeatDrawing extends Beat
             md.effectsCache.stroke = true;
             effectsCache.stroke = true;
         }
+
+        if (effect.arpeggio.direction != BeatArpeggioDirection.None)
+        {
+            md.effectsCache.arpeggio = true;
+            effectsCache.arpeggio = true;
+        }
+
         if (effect.hasRasgueado)
         {
             md.effectsCache.rasgueado = true;

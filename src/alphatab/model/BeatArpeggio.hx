@@ -13,27 +13,18 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with alphaTab.  If not, see <http://www.gnu.org/licenses/>.
- *  
- *  This code is based on the code of TuxGuitar. 
- *      Copyright: J.Jørgen von Bargen, Julian Casadesus <julian@casadesus.com.ar>
- *      http://tuxguitar.herac.com.ar/
  */
-package alphatab.file.gpx.score;
+package alphatab.model;
 
-class GpxBeat 
+/**
+ * An arpeggio effect on beats
+ */
+class BeatArpeggio
 {
-    public var id(default,default):Int;
-    public var rhythmId(default,default):Int;
-    public var noteIds(default,default):Array<Int>;
-    public var dyn(default,default):String;
-    // Barre
-    public var barreFret(default, default): Int;
-    public var barreString(default, default): Int;
+    public var direction(default,default):Int;
 
-    public var arpeggio(default, default): String;
-    
     public function new()
     {
-        
+        direction = BeatArpeggioDirection.None;
     }
 }

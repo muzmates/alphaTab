@@ -488,6 +488,8 @@ class ScoreStave extends Stave
 
         var voices = beat.voices.length;
 
+        x += paintArpeggio(layout, context, beat, x, y);
+
         // paint voices
         for (i in 0...voices)
         {
@@ -898,7 +900,7 @@ class ScoreStave extends Stave
                 noteHeadX -= displaceOffset;
             }
         }
-        
+
         // draw accidental
         // TODO: validate accidentals 
         // TODO: try to place accidentals side-by-side if there is not enough space 
@@ -909,6 +911,7 @@ class ScoreStave extends Stave
             {
                 accidentalX -= displaceOffset;
             }
+
             var accidentalY:Int = cast (noteHeadY + 3 * layout.scale);
             
             if (note.getAccitental() == MeasureDrawing.NATURAL)

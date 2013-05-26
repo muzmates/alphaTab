@@ -84,7 +84,12 @@ class SongFactory
     {
         return new BeatStroke();
     }
-    
+
+    public function newArpeggio() : BeatArpeggio
+    {
+        return new BeatArpeggio();
+    }
+
     public function newVoice(index:Int) : Voice
     {
         return new Voice(this, index);

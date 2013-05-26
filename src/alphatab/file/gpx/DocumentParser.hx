@@ -20,6 +20,8 @@
  */
 package alphatab.file.gpx;
 
+import alphatab.model.BeatArpeggioDirection;
+import alphatab.model.BeatArpeggio;
 import alphatab.model.Barre;
 import alphatab.model.Direction;
 import alphatab.model.Marker;
@@ -251,8 +253,13 @@ class DocumentParser
                         {
                             var gpxBeat = _document.getBeat(gpxVoice.beatIds[b]);
                             var rhythm = _document.getRhythm(gpxBeat.rhythmId);
-                            
+
                             var beat:Beat = getBeat(measure, start);
+
+                            if(gpxBeat.arpeggio == "Down")
+                                beat.effect.arpeggio.direction = BeatArpeggioDirection.Down;
+                            else if(gpxBeat.arpeggio == "Up")
+                                beat.effect.arpeggio.direction = BeatArpeggioDirection.Up;
 
                             parseBeatProperties(beat, gpxBeat);
 

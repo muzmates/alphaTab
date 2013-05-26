@@ -16,10 +16,12 @@
  */
 package alphatab.tablature.staves;
 
+import alphatab.tablature.model.BeatDrawing;
 import alphatab.tablature.model.BarreDrawning;
 import alphatab.model.Measure;
 import alphatab.model.Direction;
 import alphatab.model.Barre;
+import alphatab.model.BeatArpeggioDirection;
 import alphatab.tablature.drawing.DrawingContext;
 import alphatab.tablature.drawing.DrawingLayer;
 import alphatab.tablature.drawing.DrawingLayers;
@@ -349,5 +351,48 @@ class Stave
             .addString(num, DrawingResources.defaultFont,
             x + 5, y + DrawingResources.defaultFontHeight);
         }
+    }
+
+    // Pain arpeggio effect
+    private function paintArpeggio(layout:ViewLayout,
+                                   context:DrawingContext,
+                                   beat:BeatDrawing,
+                                   x:Int, y:Int): Int
+    {
+        if (beat.effect.arpeggio.direction == BeatArpeggioDirection.None)
+            return 0;
+
+        var offset = Math.floor(DrawingResources.getScoreNoteSize(layout,
+                                true).x);
+
+        for(i in beat.voices) {
+            var v: VoiceDrawing = cast i;
+
+            if(v.anyDisplaced) {
+                offset += Math.floor(DrawingResources.getScoreNoteSize(layout,
+                                     false).x);
+                break;
+            }
+        }
+
+        x -= offset;
+        y += spacing.get(getLineTopSpacing());
+
+        var symbolScale = 0.75;
+        var w:Int = Std.int((beat.measure.track.stringCount() - 1) *
+                    layout.stringSpacing);
+
+        var layer:DrawingLayer = context.get(DrawingLayers.MainComponents);
+        var step:Float = 18 * layout.scale * symbolScale;
+        var loops:Int = Math.floor(Math.max(1, (w / step)));
+
+        for (i in 0 ... loops)
+        {
+            layer.addMusicSymbol(MusicFont.ArpeggioDown, x, y,
+                                 layout.scale * symbolScale);
+            y += Math.floor(step);
+        }
+
+        return offset;
     }
 }

@@ -259,6 +259,11 @@ class DocumentReader
                 {
                     beat.noteIds = [];
                 }
+
+                if (beatNode.hasNode.Arpeggio) {
+                    beat.arpeggio = beatNode.node.Arpeggio.innerData;
+                }
+
                 if (beatNode.hasNode.Properties){
                     var props = beatNode.node.Properties;
                     for (prop in props.elements){

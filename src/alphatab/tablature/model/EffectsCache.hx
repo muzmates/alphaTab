@@ -48,6 +48,7 @@ class EffectsCache
     public var rightHandFingering(default,default):Array<Int>;
     public var fingering(default,default):Int;
     public var stroke(default,default):Bool;
+    public var arpeggio(default,default):Bool;
     public var rasgueado(default,default):Bool;
     public var pickStroke(default,default):Bool;
     public var chord(default,default):Bool;
