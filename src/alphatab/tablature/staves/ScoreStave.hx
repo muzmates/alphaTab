@@ -564,7 +564,7 @@ class ScoreStave extends Stave
             }
             
             paintBeam(layout, context, voice, voiceIndex, multiVoice, x, y);
-            paintTriplet(layout, context, voice, x, y);
+            paintTriplet(layout, context, voice, x, y, voiceIndex, multiVoice);
         }
     }
     
@@ -614,7 +614,7 @@ class ScoreStave extends Stave
         paintDottedNote(layout, context, voice, false, x, y);
     }
         
-    private function paintBeam(layout:ViewLayout,
+    private function  paintBeam(layout:ViewLayout,
                                context:DrawingContext,
                                voice:VoiceDrawing,
                                voiceIndex: Int,
@@ -709,7 +709,6 @@ class ScoreStave extends Stave
                         
                         var hY1:Int = Math.floor(y + yMove + calculateBeamY(layout, voice.beatGroup, direction, startXforCalculation, key, clef));
                         var hY2:Int = Math.floor(y + yMove + calculateBeamY(layout, voice.beatGroup, direction, endXforCalculation, key, clef));
-                        
                         NotePainter.paintBar(fill, startX, hY1, endX, hY2, index, rotation, layout.scale);
                     }
                 }
@@ -801,7 +800,9 @@ class ScoreStave extends Stave
     
    
     
-    private function paintTriplet(layout:ViewLayout, context:DrawingContext, voice:VoiceDrawing, x:Int, y:Int)
+    private function paintTriplet(layout:ViewLayout, context:DrawingContext,
+                                  voice:VoiceDrawing, x:Int, y:Int,
+                                  voiceIndex:Int, multiVoice:Bool)
     {
         if (voice.duration.tuplet.equals(Tuplet.NORMAL)) return;
 
@@ -815,7 +816,7 @@ class ScoreStave extends Stave
             context.get(DrawingLayers.VoiceDraw1),
             context.get(DrawingLayers.VoiceDraw2));
 
-        y += spacing.get(Triplet);
+        y += spacing.get(ScoreMiddleLines);
         
         // paint group if group is full and is first of group
         //  otherwise only a number
@@ -827,32 +828,53 @@ class ScoreStave extends Stave
             var firstVoice = voice.tripletGroup.voices[0];
             var lastVoice = voice.tripletGroup.voices[voice.tripletGroup.voices.length -1];
 
-            var xOffset = voice.beatDrawing().minNote.noteSize.x;
-            var startX = firstVoice.beatDrawing().fullX() + xOffset;
-            var endX = lastVoice.beatDrawing().fullX() + xOffset;
-            
-            var direction:Int = voice.isRestVoice() ? VoiceDirection.Up : voice.beatGroup.getDirection();
-            
+            var key:Int = voice.beat.measure.keySignature();
+            var clef:Int = voice.beat.measure.clef;
+            var direction:Int = null;
+
+            if(multiVoice)
+                direction = voiceIndex == 0 ? VoiceDirection.Up : VoiceDirection.Down;
+            else
+                direction = voice.beatGroup.getDirection();
+
+            var h = spacing.spacing[Triplet];
+            var lineSpace = h + 4*layout.scale;
+            var yMove:Float = direction == VoiceDirection.Up ?
+            Math.round(layout.scoreLineSpacing / 3) + 1 - lineSpace :
+            Math.round(layout.scoreLineSpacing / 3) * 2 + lineSpace;
+
+            var startXforCalculation = firstVoice.beatDrawing().fullX();
+            var endXforCalculation = lastVoice.beatDrawing().fullX();
+
+            var startY:Int = Math.floor(y + yMove + calculateBeamY(layout, voice.beatGroup, direction, startXforCalculation, key, clef));
+            var endY:Int = Math.floor(y + yMove + calculateBeamY(layout, voice.beatGroup, direction, endXforCalculation, key, clef));
+            var startX = firstVoice.beatDrawing().fullX();
+            var endX = lastVoice.beatDrawing().fullX();
+
             if (direction == VoiceDirection.Up)
             {
-                var offset = Math.floor(DrawingResources.getScoreNoteSize(layout, false).x);
+                var offset = Math.round(DrawingResources.getScoreNoteSize(
+                    layout, false).x);
                 startX += offset;
                 endX += offset;
             }
-                    
-            var lineW = endX - startX;
-            
-            var h = spacing.spacing[Triplet];
-            
+
             var s:String = Std.string(voice.tripletGroup.triplet);
             context.graphics.font = DrawingResources.effectFont;
             var w:Float = context.graphics.measureText(s);
-                        
-            draw.addLine(startX, y + h, startX, y);
-            draw.addLine(startX, y, startX + (lineW / 2) - w , y);
-            draw.addString(s, DrawingResources.effectFont,  startX + ((lineW - w)/ 2), y);
-            draw.addLine(startX + (lineW/2) + w , y, endX, y);
-            draw.addLine(endX, y + h, endX, y);
+
+            function pointY(xArg:Float): Float{
+                return (xArg - startX)*(endY - startY) / (endX - startX) + startY;
+            }
+
+            draw.addLine(startX, startY, startX, startY+h);
+            var tmpEndX = startX + ((endX - startX) / 2) - w;
+            draw.addLine(startX, startY, tmpEndX, pointY(tmpEndX));
+            draw.addString(s, DrawingResources.effectFont, tmpEndX, pointY(tmpEndX));
+            tmpEndX = tmpEndX + w;
+            draw.addLine(tmpEndX, pointY(tmpEndX), endX, endY);
+            draw.addLine(endX, endY, endX, endY+h);
+
         }
         else if(!voice.tripletGroup.isFull())
         {
