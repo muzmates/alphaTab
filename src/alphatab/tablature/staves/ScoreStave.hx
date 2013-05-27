@@ -16,6 +16,7 @@
  */
 package alphatab.tablature.staves;
 
+import alphatab.model.BeatArpeggio;
 import alphatab.tablature.drawing.DrawingLayer;
 import alphatab.tablature.model.BarreDrawning;
 import alphatab.model.Direction;
@@ -507,8 +508,11 @@ class ScoreStave extends Stave
         paintBeatEffects(layout, context, beat, x, y);
     }
     
-    private function paintExtraLines(layout:ViewLayout, context:DrawingContext, beat:BeatDrawing, x:Int, y:Int)
+    private function paintExtraLines(layout:ViewLayout,
+                                     context:DrawingContext,
+                                     beat:BeatDrawing, x:Int, y:Int)
     {
+
         if (!beat.isRestBeat())
         {
             var scoreY:Int = y + spacing.get(ScoreMiddleLines);
@@ -523,9 +527,14 @@ class ScoreStave extends Stave
         var x1:Float = x - 3 * layout.scale;
         var x2:Float = x + 12 * layout.scale;
 
+        if(note.beatDrawing().effectsCache.arpeggio) {
+            x1 += BeatArpeggio.size(layout);
+            x2 += BeatArpeggio.size(layout);
+        }
+
         var scorelineSpacing:Int = cast layout.scoreLineSpacing;
 
-        if ( (realY + scorelineSpacing * 2) < y)
+        if ( realY < y)
         {
             var i = y;
             while (i > realY)
