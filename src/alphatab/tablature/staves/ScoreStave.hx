@@ -532,6 +532,18 @@ class ScoreStave extends Stave
             x2 += BeatArpeggio.size(layout);
         }
 
+        for(v in note.beatDrawing().voices) {
+            var vv: VoiceDrawing = cast v;
+
+            if(vv.anyDisplaced) {
+                var off = Math.floor(DrawingResources.getScoreNoteSize(layout, false).x);
+
+                x1 += off;
+                x2 += off;
+                break;
+            }
+        }
+
         var scorelineSpacing:Int = cast layout.scoreLineSpacing;
 
         if ( realY < y)
@@ -670,8 +682,8 @@ class ScoreStave extends Stave
             var yMove:Float = direction == VoiceDirection.Up ?
                             Math.round(layout.scoreLineSpacing / 3) + 1 :
                             Math.round(layout.scoreLineSpacing / 3) * 2;
-            
-            var y1:Int = y + (direction == VoiceDirection.Up 
+
+            var y1:Int = y + (direction == VoiceDirection.Up
                                 ? getNoteScorePosY(layout, voice.minNote)
                                 : getNoteScorePosY(layout, voice.maxNote));
             var y2:Int = Math.round(y + calculateBeamY(layout, voice.beatGroup, direction, Math.round(x + xMove), key, clef));
@@ -722,12 +734,20 @@ class ScoreStave extends Stave
                             startX = Math.floor(voice.leftJoin.beatDrawing().fullX() + xMove);
                             endX = Math.ceil(voice.rightJoin.beatDrawing().fullX() + xMove);
                             startXforCalculation = voice.leftJoin.beatDrawing().fullX();
+                            startXforCalculation = voice.leftJoin.beatDrawing().fullX();
                             endXforCalculation = voice.rightJoin.beatDrawing().fullX();
+
                         }
-                        
+
+                        if(voice.anyDisplaced || voice.leftJoin.anyDisplaced || voice.rightJoin.anyDisplaced) {
+                            startX += Math.floor(DrawingResources.getScoreNoteSize(layout, false).x);
+                        }
+
                         var hY1:Int = Math.floor(y + yMove + calculateBeamY(layout, voice.beatGroup, direction, startXforCalculation, key, clef));
                         var hY2:Int = Math.floor(y + yMove + calculateBeamY(layout, voice.beatGroup, direction, endXforCalculation, key, clef));
-                        NotePainter.paintBar(fill, startX, hY1, endX, hY2, index, rotation, layout.scale);
+
+                        NotePainter.paintBar(fill, startX, hY1, endX,
+                                             hY2, index, rotation, layout.scale);
                     }
                 }
             }
@@ -801,7 +821,7 @@ class ScoreStave extends Stave
             x2 = beatGroup.lastMaxNote.beatDrawing().fullX();
             y1 = Math.round(getNoteScorePosY(layout, beatGroup.firstMaxNote) - upOffset);
             y2 = Math.round(getNoteScorePosY(layout, beatGroup.lastMaxNote) - upOffset);
-            
+
             // ensure the maxDistance
             if (y1 < y2 && (y2 - y1) > maxDistance) y2 = (y1 + maxDistance);
             if (y2 < y1 && (y1 - y2) > maxDistance) y1 = (y2 + maxDistance);

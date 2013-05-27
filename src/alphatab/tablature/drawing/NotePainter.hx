@@ -60,7 +60,7 @@ class NotePainter
             layer.startFigure();
             layer.addPolygon([new Point(x1, realY1), new Point(x2, realY2), 
                                 new Point(x2, realY2 + width), 
-                                new Point(x1, realY1 + width), new Point(x1, realY1), ]);
+                                new Point(x1, realY1 + width), new Point(x1, realY1)]);
             layer.closeFigure();
         }
     }
