@@ -121,8 +121,12 @@ class Stave
         context.graphics.font = DrawingResources.defaultFont;
         var w:Float = context.graphics.measureText(text);
 
-        draw.addLine(endX, realY, endX, realY + h);
-        draw.addDashedLine(startX + w, realY, endX, realY);
+        // draw line, if there is enough place
+        if(startX + w < endX){
+            draw.addLine(endX, realY, endX, realY + h);
+            draw.addDashedLine(startX + w, realY, endX, realY);
+        }
+
         context.get(DrawingLayers.MainComponentsDraw)
         .addString(text, DrawingResources.defaultFont, startX, realY);
     }
