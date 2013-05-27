@@ -375,22 +375,27 @@ class Stave
             }
         }
 
+        var realY:Int = y + spacing.get(getLineTopSpacing()) + beat.maxNote.scorePosY;
+        var yMin:Int = y + spacing.get(getLineTopSpacing()) + beat.minNote.scorePosY;
+
         x -= offset;
-        y += spacing.get(getLineTopSpacing());
 
         var symbolScale = 0.75;
-        var w:Int = Std.int((beat.measure.track.stringCount() - 1) *
-                    layout.stringSpacing);
+        var h:Int = yMin - realY;
+
+        if(beat.measure.number() == 29) {
+            trace(h);
+        }
 
         var layer:DrawingLayer = context.get(DrawingLayers.MainComponents);
         var step:Float = 18 * layout.scale * symbolScale;
-        var loops:Int = Math.floor(Math.max(1, (w / step)));
+        var loops:Int = Math.floor(Math.max(1, (h / step) + 1));
 
         for (i in 0 ... loops)
         {
-            layer.addMusicSymbol(MusicFont.ArpeggioDown, x, y,
+            layer.addMusicSymbol(MusicFont.ArpeggioDown, x, realY,
                                  layout.scale * symbolScale);
-            y += Math.floor(step);
+            realY += Math.floor(step);
         }
 
         return offset;
