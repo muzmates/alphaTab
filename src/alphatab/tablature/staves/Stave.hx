@@ -16,6 +16,7 @@
  */
 package alphatab.tablature.staves;
 
+import alphatab.tablature.model.NoteDrawing;
 import alphatab.model.BeatArpeggio;
 import alphatab.tablature.model.BeatDrawing;
 import alphatab.tablature.model.BarreDrawning;
@@ -365,15 +366,8 @@ class Stave
 
         var offset = BeatArpeggio.size(layout);
 
-        for(i in beat.voices) {
-            var v: VoiceDrawing = cast i;
-
-            if(v.anyDisplaced) {
-                offset += Math.floor(DrawingResources.getScoreNoteSize(layout,
-                                     false).x);
-                break;
-            }
-        }
+        if(beat.anyDisplaced())
+            offset += BeatDrawing.displacedOffset(layout);
 
         var realY:Int = y + spacing.get(getLineTopSpacing()) + beat.maxNote.scorePosY;
         var yMin:Int = y + spacing.get(getLineTopSpacing()) + beat.minNote.scorePosY;
@@ -398,6 +392,11 @@ class Stave
             realY += Math.floor(step);
         }
 
-        return offset;
+        if(beat.hasAccitental())
+            return offset;
+        else {
+            return cast (beat.anyDisplaced() ? 0:
+                         BeatDrawing.displacedOffset(layout));
+        }
     }
 }

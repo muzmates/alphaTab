@@ -739,9 +739,9 @@ class ScoreStave extends Stave
 
                         }
 
-                        if(voice.anyDisplaced || voice.leftJoin.anyDisplaced || voice.rightJoin.anyDisplaced) {
-                            startX += Math.floor(DrawingResources.getScoreNoteSize(layout, false).x);
-                        }
+                        //if(voice.anyDisplaced || voice.leftJoin.anyDisplaced || voice.rightJoin.anyDisplaced) {
+                            //startX += BeatDrawing.displacedOffset(layout);
+                        //}
 
                         var hY1:Int = Math.floor(y + yMove + calculateBeamY(layout, voice.beatGroup, direction, startXforCalculation, key, clef));
                         var hY2:Int = Math.floor(y + yMove + calculateBeamY(layout, voice.beatGroup, direction, endXforCalculation, key, clef));

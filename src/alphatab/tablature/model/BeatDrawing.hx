@@ -23,6 +23,7 @@ import alphatab.model.effects.BendPoint;
 import alphatab.model.SongFactory;
 import alphatab.model.Voice;
 import alphatab.tablature.ViewLayout;
+import alphatab.tablature.drawing.DrawingResources;
 
 /**
  * This beat implements layouting functionalities for later drawing on staves.
@@ -55,14 +56,17 @@ class BeatDrawing extends Beat
         // calculate new size of beat and remove the old one to get the spacing
         return cast (width * factor);
     }
-    
+
     public function fullX() : Int
     {
         var layout:ViewLayout = measureDrawing().staveLine.tablature.viewLayout;
         var r = measureDrawing().staveLine.x + measureDrawing().x + measureDrawing().getDefaultSpacings(layout) + x;
 
-        if(effectsCache.arpeggio)
+        if(hasAccitental() && effectsCache.arpeggio)
             r += BeatArpeggio.size(layout);
+
+        else if(effectsCache.arpeggio && (!anyDisplaced() || hasAccitental()))
+            r += displacedOffset(layout);
 
         return r;
     }
@@ -324,5 +328,34 @@ class BeatDrawing extends Beat
         
         return offsets;
     }
-    
+
+    public function hasAccitental(): Bool {
+        for(v in voices) {
+            for(n in v.notes) {
+                var nn: NoteDrawing = cast n;
+
+                if(nn.getAccitental() != MeasureDrawing.NONE) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public function anyDisplaced(): Bool {
+        for(v in voices) {
+            var vv: VoiceDrawing = cast v;
+
+            if(vv.anyDisplaced) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static function displacedOffset(layout: ViewLayout): Int {
+        return Math.floor(DrawingResources.getScoreNoteSize(layout, false).x);
+    }
 }
