@@ -381,10 +381,6 @@ class Stave
         var symbolScale = 0.75;
         var h:Int = yMin - realY;
 
-        if(beat.measure.number() == 29) {
-            trace(h);
-        }
-
         var layer:DrawingLayer = context.get(DrawingLayers.MainComponents);
         var step:Float = 18 * layout.scale * symbolScale;
         var loops:Int = Math.floor(Math.max(1, (h / step) + 1));
