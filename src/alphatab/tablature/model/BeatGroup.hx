@@ -91,13 +91,20 @@ class BeatGroup
         
         if (add)
         {
-            _lastVoice = voice;
-            _voices.push(voice);
-            checkNote(voice.minNote);
-            checkNote(voice.maxNote);
+           forceAdd(voice);
         }
         
         return add;
+    }
+
+    // add voice to beat group without any checks
+    // Needed to calculate lines above group of any voices (eg. 4-th)
+    public function forceAdd(voice:VoiceDrawing)
+    {
+        _lastVoice = voice;
+        _voices.push(voice);
+        checkNote(voice.minNote);
+        checkNote(voice.maxNote);
     }
     
     private function checkNote(note:NoteDrawing)

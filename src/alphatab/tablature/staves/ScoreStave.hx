@@ -884,8 +884,19 @@ class ScoreStave extends Stave
             var startXforCalculation = firstVoice.beatDrawing().fullX();
             var endXforCalculation = lastVoice.beatDrawing().fullX();
 
-            var startY:Int = Math.floor(y + yMove + calculateBeamY(layout, voice.beatGroup, direction, startXforCalculation, key, clef));
-            var endY:Int = Math.floor(y + yMove + calculateBeamY(layout, voice.beatGroup, direction, endXforCalculation, key, clef));
+            var beatGroup: BeatGroup;
+            if (voice.duration.value > Duration.EIGHTH){
+                // triplet group is beats joined group of 8th, 16th, 32th or 64th voices
+                beatGroup = voice.beatGroup;
+            } else {
+                beatGroup =  new BeatGroup();
+                for (v in voice.tripletGroup.voices){
+                    beatGroup.forceAdd(v);
+                }
+            }
+
+            var startY:Int = Math.floor(y + yMove + calculateBeamY(layout, beatGroup, direction, startXforCalculation, key, clef));
+            var endY:Int = Math.floor(y + yMove + calculateBeamY(layout, beatGroup, direction, endXforCalculation, key, clef));
             var startX = firstVoice.beatDrawing().fullX();
             var endX = lastVoice.beatDrawing().fullX();
 
