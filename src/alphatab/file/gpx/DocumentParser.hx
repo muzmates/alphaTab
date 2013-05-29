@@ -75,12 +75,11 @@ class DocumentParser
         song.title = _document.score.title;
         song.artist = _document.score.artist;
         song.album = _document.score.album;
-        song.words = _document.score.wordsAndMusic;
-        song.music = _document.score.wordsAndMusic;
+        song.words = _document.score.words;
+        song.music = _document.score.music;
         song.copyright = _document.score.copyright;
         song.tab = _document.score.tabber;
         song.notice = _document.score.notices;
-        
         song.pageSetup.pageSize.x = _document.score.pageSetup.width;
         song.pageSetup.pageSize.y = _document.score.pageSetup.height;
         song.pageSetup.pageMargin = _document.score.pageSetup.margin;

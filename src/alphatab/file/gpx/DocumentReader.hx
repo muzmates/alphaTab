@@ -77,13 +77,12 @@ class DocumentReader
             _gpxDocument.score.artist = scoreNode.node.Artist.innerData;    
             _gpxDocument.score.album = scoreNode.node.Album.innerData;    
             _gpxDocument.score.words = scoreNode.node.Words.innerData;    
-            _gpxDocument.score.music = scoreNode.node.Music.innerData;    
-            _gpxDocument.score.wordsAndMusic = scoreNode.node.WordsAndMusic.innerData;    
+            _gpxDocument.score.music = scoreNode.node.Music.innerData;
+            _gpxDocument.score.wordsAndMusic = scoreNode.node.WordsAndMusic.innerData;
             _gpxDocument.score.copyright = scoreNode.node.Copyright.innerData;    
             _gpxDocument.score.tabber = scoreNode.node.Tabber.innerData;    
             _gpxDocument.score.instructions = scoreNode.node.Instructions.innerData;    
-            _gpxDocument.score.notices = scoreNode.node.Notices.innerData;    
-            
+            _gpxDocument.score.notices = scoreNode.node.Notices.innerData;
             _gpxDocument.score.pageSetup.width = Std.parseInt(scoreNode.node.PageSetup.node.Width.innerData);
             _gpxDocument.score.pageSetup.height = Std.parseInt(scoreNode.node.PageSetup.node.Height.innerData);
             _gpxDocument.score.pageSetup.orientation = scoreNode.node.PageSetup.node.Orientation.innerData;
