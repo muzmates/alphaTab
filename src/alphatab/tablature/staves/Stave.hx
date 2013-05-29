@@ -132,9 +132,9 @@ class Stave
         .addString(text, DrawingResources.defaultFont, startX, realY);
     }
 
-    private function getBarreY(layout:ViewLayout, barre:BarreDrawning): Int
+    private function getBarreY(layout:ViewLayout, barre:BarreDrawning): Float
     {
-        return Math.floor(5*layout.scale);
+        return 5*layout.scale;
     }
     
     // paint division lines, measure numbers and repeat bars/endings

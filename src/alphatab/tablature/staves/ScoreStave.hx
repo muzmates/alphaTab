@@ -758,8 +758,26 @@ class ScoreStave extends Stave
     {
         return offset * (layout.scoreLineSpacing / 8.0);
     }
-    
-      
+
+    private override function getBarreY(layout:ViewLayout, barre:BarreDrawning): Float
+    {
+
+        var beatGroup:BeatGroup = new BeatGroup();
+        var upOffset:Float = getOffset(UP_OFFSET);
+
+        for (b in barre.beats){
+           var key:Int = b.measure.keySignature();
+           var clef:Int = b.measure.clef;
+           var beat:BeatDrawing = cast b;
+           for (voice in beat.voices){
+               var v:VoiceDrawing = cast voice;
+               beatGroup.forceAdd(v);
+           }
+        }
+        // TODO: move magic digits (12 in this particular case) to constants
+        return getNoteScorePosY(layout, beatGroup.maxNote)+upOffset-(12*layout.scale);
+    }
+
     private function calculateBeamY(layout:ViewLayout, beatGroup:BeatGroup, direction:Int, x:Float, key:Float, clef:Int)
     {
         // we use the min/max notes to place the beam along their real position        
