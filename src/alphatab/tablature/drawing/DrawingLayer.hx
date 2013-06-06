@@ -107,6 +107,7 @@ class DrawingLayer
                         var x:Int = cast elm.X;
                         var y:Int = cast elm.Y;
                         var radius:Int = cast elm.Radius;
+                        graphics.moveTo(x+radius, y+radius);
                         graphics.circle(x+radius, y+radius, radius);
                         graphics.closePath();
                     case "addRect":
