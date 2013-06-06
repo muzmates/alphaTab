@@ -579,7 +579,7 @@ class ScoreStave extends Stave
         {
             if (voice.isRestVoice())
             {
-                paintSilence(layout, context, voice, x, y);
+                paintSilence(layout, context, voice, multiVoice, x, y);
             }
             else
             {
@@ -598,10 +598,21 @@ class ScoreStave extends Stave
         }
     }
     
-    private function paintSilence(layout:ViewLayout, context:DrawingContext, voice:VoiceDrawing, x:Int, y:Int)
+    private function paintSilence(layout:ViewLayout,
+                                  context:DrawingContext,
+                                  voice:VoiceDrawing,
+                                  multiVoice: Bool,
+                                  x:Int, y:Int)
     {
         x += Math.round(3 * layout.scale);
         y += spacing.get(ScoreMiddleLines);
+
+        if(multiVoice && voice.index == 1) {
+            var voices = voice.beat.voices;
+
+            if(!voices[0].isRestVoice())
+                y += Math.floor(layout.scoreLineSpacing*4);
+        }
 
         var fill: DrawingLayer = getVoiceDrawing(
             voice.index,
@@ -639,7 +650,6 @@ class ScoreStave extends Stave
                 y += Math.round(2 * layout.scale);
                 x += Math.round(5 * layout.scale);
         }
-        
 
         paintDottedNote(layout, context, voice, false, x, y);
     }
