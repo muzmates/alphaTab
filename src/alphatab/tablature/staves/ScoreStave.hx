@@ -1327,7 +1327,7 @@ class ScoreStave extends Stave
 
         var dotSize:Float = 3.0 * layout.scale;
         
-        x += Math.round(DrawingResources.getScoreNoteSize(layout, false).x + (4*layout.scale));
+        x += Math.round(DrawingResources.getScoreNoteSize(layout, false).x + (7*layout.scale));
         y += Math.round(4 * layout.scale);
         fill.addCircle(Math.round(x - (dotSize / 2.0)), Math.round(y - (dotSize / 2.0)), dotSize);
 

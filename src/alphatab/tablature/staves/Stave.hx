@@ -165,6 +165,19 @@ class Stave
         bottomY = y + staveHeight;      
         
         dotSize = cast Math.max(1, (dotSize * layout.scale));
+        // Score stave
+        var yMove:Float = 4 * layout.scale;
+        var centerY = y + ((bottomY - y) / 2) - dotSize/2;
+        var dotY1 = centerY - yMove;
+        var dotY2 = centerY + yMove;
+
+        // Tabulature stave
+        if(Std.is(this, TablatureStave)){
+            yMove = 8 * layout.scale;
+            var centerY = y + ((bottomY - y) / 2);
+            dotY1 = centerY - yMove - dotSize;
+            dotY2 = centerY + yMove;
+        }
 
         // RepeatEndings
         if (measure.header.isRepeatOpen)
@@ -176,13 +189,10 @@ class Stave
             draw.addLine(x2, y, x2, bottomY);
         
             // two dots 
-            x2 += Math.floor(2 * layout.scale);     
+            x2 += Math.floor(2 * layout.scale);
             
-            var centerY = y + ((bottomY - y) / 2);            
-            var yMove:Float = 6 * layout.scale;         
-            
-            fill.addCircle(x2, centerY - yMove - dotSize, dotSize);
-            fill.addCircle(x2, centerY + yMove, dotSize);
+            fill.addCircle(x2, dotY1, dotSize);
+            fill.addCircle(x2, dotY2, dotSize);
         }
         else
         {
@@ -217,13 +227,10 @@ class Stave
             if (measure.header.repeatClose > 0)
             {
                 // two dots  
-                x2 -= (Math.floor(2 * layout.scale) + dotSize);     
+                x2 -= (Math.floor(2 * layout.scale) + dotSize);
                 
-                var centerY = y + ((bottomY - y) / 2);            
-                var yMove:Float = 6 * layout.scale;         
-                
-                fill.addCircle(x2, centerY - yMove - dotSize, dotSize);
-                fill.addCircle(x2, centerY + yMove, dotSize);
+                fill.addCircle(x2, dotY1, dotSize);
+                fill.addCircle(x2, dotY2, dotSize);
 
                 if (index == 0 && measure.header.repeatClose > 2)
                 {
