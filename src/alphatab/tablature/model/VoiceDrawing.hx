@@ -190,59 +190,6 @@ class VoiceDrawing extends Voice
             width += BeatArpeggio.size(layout);
 
         var previousVoice = getPreviousVoiceWithNotes();
-        var nextVoice = getNextVoiceWithNotes();
-
-        // check for joins with previous / next beat 
-        var noteJoined:Bool = false;
-        var withPrevious:Bool = false;
-        
-        joinedType = JoinedType.NoneRight;
-        leftJoin = this;
-        rightJoin = this;
-        isJoinedGreaterThanQuarter = false;
-        
-        if (BeatGroup.canJoin(this, previousVoice))
-        {
-            withPrevious = true;
-            
-            if (previousVoice.duration.value >= duration.value)
-            {
-                leftJoin = previousVoice;
-                rightJoin = this;
-                joinedType = JoinedType.Left;                
-                noteJoined = true;
-            }
-            
-            if (previousVoice.duration.value > Duration.QUARTER)
-            {
-                isJoinedGreaterThanQuarter = true;
-            }
-
-        }
-        
-        if (BeatGroup.canJoin(this, nextVoice))
-        {
-            if (nextVoice.duration.value >= duration.value)
-            {
-                rightJoin = nextVoice;
-                if (previousVoice == null || previousVoice.isRestVoice() || previousVoice.duration.value < duration.value)
-                {
-                    leftJoin = this;
-                }
-                
-                noteJoined = true;
-                joinedType = JoinedType.Right;                    
-            }
-            if (nextVoice.duration.value > Duration.QUARTER)
-            {
-                isJoinedGreaterThanQuarter = true;
-            }
-        }
-        
-        if (!noteJoined && withPrevious)
-        {
-            joinedType = JoinedType.NoneLeft;
-        }
 
         // create beat group
         if (!isRestVoice())

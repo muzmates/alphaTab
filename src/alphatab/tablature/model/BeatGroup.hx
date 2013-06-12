@@ -16,6 +16,7 @@
  */
 
 package alphatab.tablature.model;
+import Lambda;
 import alphatab.model.Duration;
 import alphatab.model.Note;
 import alphatab.model.SongManager;
@@ -84,14 +85,15 @@ class BeatGroup
         {
             add = true;
         }
-        else if (canJoin(_lastVoice, voice)) 
+        else if (canJoin(voice))
         {
             add = true;
         }
         
         if (add)
         {
-           forceAdd(voice);
+            forceAdd(voice);
+            setupVoicesProperties();
         }
         
         return add;
@@ -125,7 +127,7 @@ class BeatGroup
                 firstMinNote = note;
             }
         }
-        
+
         // detect the biggest note which is at the beginning of this group
         if (firstMaxNote == null || note.voice.beat.start < firstMaxNote.voice.beat.start)
         {
@@ -173,27 +175,78 @@ class BeatGroup
             minNote = note;
         }
     }
+
+    private function setupVoicesProperties()
+    {
+        var lastIndex:Int = _voices.length - 1;
+        var previousVoice:VoiceDrawing = null;
+
+        if(lastIndex > 0){
+            previousVoice = _voices[lastIndex-1];
+        };
+
+        _lastVoice.joinedType = JoinedType.NoneRight;
+        _lastVoice.leftJoin = _lastVoice;
+        _lastVoice.rightJoin = _lastVoice;
+        _lastVoice.isJoinedGreaterThanQuarter = false;
+
+        if (previousVoice != null){
+
+            if (previousVoice.duration.value >= _lastVoice.duration.value)
+            {
+                _lastVoice.leftJoin = previousVoice;
+                _lastVoice.rightJoin = _lastVoice;
+                _lastVoice.joinedType = JoinedType.Left;
+
+            } else {
+                _lastVoice.joinedType = JoinedType.NoneLeft;
+            }
+
+            if (previousVoice.duration.value > Duration.QUARTER)
+            {
+                _lastVoice.isJoinedGreaterThanQuarter = true;
+            }
+
+            if (_lastVoice.duration.value >= previousVoice.duration.value)
+            {
+                previousVoice.rightJoin = _lastVoice;
+                previousVoice.joinedType = JoinedType.Right;
+
+            }
+
+            if (_lastVoice.duration.value > Duration.QUARTER)
+            {
+                previousVoice.isJoinedGreaterThanQuarter = true;
+            }
+        }
+
+        if (previousVoice == null || previousVoice.isRestVoice()
+        || previousVoice.duration.value < _lastVoice.duration.value)
+        {
+            _lastVoice.leftJoin = _lastVoice;
+        }
+    }
     
-    public static function canJoin(v1:VoiceDrawing, v2:VoiceDrawing)
+    private function canJoin(voice:VoiceDrawing)
     {
         // is this a voice we can join with?
-        if (v1 == null || v2 == null || v1.isRestVoice() || v2.isRestVoice())
+        if (_lastVoice == null || voice == null || _lastVoice.isRestVoice() || voice.isRestVoice())
         {
             return false;
         } 
         
-        var m1 = v1.measureDrawing();
-        var m2 = v2.measureDrawing();
+        var m1 = _lastVoice.measureDrawing();
+        var m2 = voice.measureDrawing();
         // only join on same measure
         if (m1 != m2) return false;
         
         // get times of those voices and check if the times 
         // are in the same division
-        var start1 = v1.beat.start;
-        var start2 = v2.beat.start;
+        var start1 = _lastVoice.beat.start;
+        var start2 = voice.beat.start;
         
         // we can only join 8th, 16th, 32th and 64th voices
-        if (v1.duration.value < Duration.EIGHTH || v2.duration.value < Duration.EIGHTH)
+        if (_lastVoice.duration.value < Duration.EIGHTH || voice.duration.value < Duration.EIGHTH)
         {
             // other voices only get a beam if they are on the same voice
             return start1 == start2;
@@ -202,12 +255,25 @@ class BeatGroup
         // we have two 8th, 16th, 32th and 64th voices
         // a division can contains a single quarter
         var divisionLength = SongManager.getDivisionLength(m1.header);
-        
-        // check if they are on the same division 
-        var division1 = Math.floor((divisionLength + start1) / divisionLength);
-        var division2 = Math.floor((divisionLength + start2) / divisionLength);
-        
-        return division1 == division2;
+
+        // for example, 6/8 time signature must contain 2 groups of 3 8-th
+        if (m1.header.timeSignature.numerator % 3 == 0)
+        {
+            var firstVoiceStart = _voices[0].beat.getRealStart();
+            if (firstVoiceStart !=  m2.start()
+            && firstVoiceStart != m2.start()+divisionLength){
+                return false;
+            }
+        }
+
+        // check if voices are on the same division
+        var dur:Int = voice.duration.time();
+        for (v in _voices){
+            dur += v.duration.time();
+        }
+
+        return dur <= divisionLength;
+
     }
     
 }
