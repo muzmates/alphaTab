@@ -718,8 +718,8 @@ class ScoreStave extends Stave
                     }
                     else
                     {
-                        var startX:Int;
-                        var endX:Int;
+                        var startX:Float;
+                        var endX:Float;
 
                         // These two variables have to be set for the calculation of our y position
                         var startXforCalculation:Int;
@@ -727,23 +727,22 @@ class ScoreStave extends Stave
 
                         if (voice.joinedType == JoinedType.NoneRight)
                         {
-                            startX = Math.floor(x + xMove);
-                            endX = Math.floor(x + (6*layout.scale) + xMove);
+                            startX = x + xMove;
+                            endX = x + (6*layout.scale) + xMove;
                             startXforCalculation = voice.beatDrawing().fullX();
                             endXforCalculation = Math.floor(voice.beatDrawing().fullX() + (6*layout.scale));
                         }
                         else if (voice.joinedType == JoinedType.NoneLeft)
                         {
-                            startX = Math.floor(x - (6*layout.scale) + xMove);
-                            endX = Math.floor(x + xMove);
+                            startX = x - (6*layout.scale) + xMove;
+                            endX = x + xMove;
                             startXforCalculation = Math.floor(voice.beatDrawing().fullX() - (6*layout.scale));
                             endXforCalculation = voice.beatDrawing().fullX();
                         }
                         else
                         {
-                            startX = Math.floor(voice.leftJoin.beatDrawing().fullX() + xMove);
-                            endX = Math.ceil(voice.rightJoin.beatDrawing().fullX() + xMove);
-                            startXforCalculation = voice.leftJoin.beatDrawing().fullX();
+                            startX = voice.leftJoin.beatDrawing().fullX() + xMove;
+                            endX = voice.rightJoin.beatDrawing().fullX() + xMove;
                             startXforCalculation = voice.leftJoin.beatDrawing().fullX();
                             endXforCalculation = voice.rightJoin.beatDrawing().fullX();
 
@@ -753,8 +752,8 @@ class ScoreStave extends Stave
                             //startX += BeatDrawing.displacedOffset(layout);
                         //}
 
-                        var hY1:Int = Math.floor(y + yMove + calculateBeamY(layout, voice.beatGroup, direction, startXforCalculation, key, clef));
-                        var hY2:Int = Math.floor(y + yMove + calculateBeamY(layout, voice.beatGroup, direction, endXforCalculation, key, clef));
+                        var hY1:Float = y + yMove + calculateBeamY(layout, voice.beatGroup, direction, startXforCalculation, key, clef);
+                        var hY2:Float = y + yMove + calculateBeamY(layout, voice.beatGroup, direction, endXforCalculation, key, clef);
 
                         NotePainter.paintBar(fill, startX, hY1, endX,
                                              hY2, index, rotation, layout.scale);
