@@ -256,23 +256,8 @@ class BeatGroup
         // a division can contains a single quarter
         var divisionLength = SongManager.getDivisionLength(m1.header);
 
-        // for example, 6/8 time signature must contain 2 groups of 3 8-th
-        if (m1.header.timeSignature.numerator % 3 == 0)
-        {
-            var firstVoiceStart = _voices[0].beat.getRealStart();
-            if (firstVoiceStart !=  m2.start()
-            && firstVoiceStart != m2.start()+divisionLength){
-                return false;
-            }
-        }
-
         // check if voices are on the same division
-        var dur:Int = voice.duration.time();
-        for (v in _voices){
-            dur += v.duration.time();
-        }
-
-        return dur <= divisionLength;
+        return (voice.beat.getRealStart() - m1.start()) % divisionLength != 0;
 
     }
     
