@@ -22,6 +22,7 @@ package alphatab.model;
 enum Target {
     Segno;
     Coda;
+    Fine;
 }
 
 /**
@@ -30,6 +31,7 @@ enum Target {
 enum Jump {
     DaCoda;
     DaSegnoAlCoda;
+    DaSegnoAlFine;
 }
 
 /**

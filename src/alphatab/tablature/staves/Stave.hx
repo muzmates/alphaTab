@@ -202,13 +202,25 @@ class Stave
         }
 
         if(!Std.is(this, TablatureStave) || !this.bothStavesActive){
+            var jy: Int = cast startY + (offset / 2);
+
+            if(measure.header.direction.hasTarget(Target.Fine)) {
+                measureHeaderTailText("fine", measure, context, layout, x, jy);
+            }
+
             if(measure.header.direction.hasJump(Jump.DaCoda)) {
-                measureHeaderTailText("Da Coda", measure, context, layout, x, y);
+                measureHeaderTailText("Da Coda", measure, context,
+                                      layout, x, jy);
             }
 
             if(measure.header.direction.hasJump(Jump.DaSegnoAlCoda)) {
                 measureHeaderTailText("D.S. al Coda", measure, context,
-                layout, x, y);
+                                      layout, x, jy);
+            }
+
+            if(measure.header.direction.hasJump(Jump.DaSegnoAlFine)) {
+                measureHeaderTailText("D.S. al Fine", measure, context,
+                                      layout, x, jy);
             }
         }
 

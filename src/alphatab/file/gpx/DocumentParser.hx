@@ -151,6 +151,8 @@ class DocumentParser
                     measureHeader.direction.addTarget(Target.Segno);
                 else if(t == "Coda")
                     measureHeader.direction.addTarget(Target.Coda);
+                else if(t == "Fine")
+                    measureHeader.direction.addTarget(Target.Fine);
             }
 
             for(j in mbar.jumps) {
@@ -159,6 +161,9 @@ class DocumentParser
 
                 else if(j == "DaSegnoAlCoda")
                     measureHeader.direction.addJump(Jump.DaSegnoAlCoda);
+
+                else if(j == "DaSegnoAlFine")
+                    measureHeader.direction.addJump(Jump.DaSegnoAlFine);
             }
 
             if(mbar.time != null && mbar.time.length == 2)
