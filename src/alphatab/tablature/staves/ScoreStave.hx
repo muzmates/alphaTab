@@ -696,15 +696,19 @@ class ScoreStave extends Stave
             var y1:Int = y + (direction == VoiceDirection.Up
                                 ? getNoteScorePosY(layout, voice.minNote)
                                 : getNoteScorePosY(layout, voice.maxNote));
-            var y2:Int = Math.round(y + calculateBeamY(layout, voice.beatGroup, direction, Math.round(x + xMove), key, clef));
-            
+
+            var y2:Int = Math.round(y + calculateBeamY(layout,
+                                    voice.beatGroup, direction,
+                                    Math.round(x + xMove), key, clef));
+
             // paint the line
             draw.addLine(x + xMove, y1 + yMove, x + xMove, y2 + yMove);
-            
+
             // need to paint a bar?
             if (voice.duration.value >= Duration.EIGHTH)
             {
                 var index:Int = voice.duration.index() - 2;
+
                 if (index > 0)
                 {
                     var rotation:Int = direction == VoiceDirection.Down ? 1 : -1; 
@@ -713,6 +717,10 @@ class ScoreStave extends Stave
                     if ((voice.joinedType == JoinedType.NoneRight || voice.joinedType == JoinedType.NoneLeft)
                         && !voice.isJoinedGreaterThanQuarter)
                     {
+                        if(direction == VoiceDirection.Down) {
+                            y2+=cast yMove*2;
+                        }
+
                         NotePainter.paintFooter(
                             fill, x, y2, voice.duration.value, rotation, layout);
                     }
@@ -789,7 +797,8 @@ class ScoreStave extends Stave
 
     private function calculateBeamY(layout:ViewLayout, beatGroup:BeatGroup, direction:Int, x:Float, key:Float, clef:Int)
     {
-        // we use the min/max notes to place the beam along their real position        
+
+        // we use the min/max notes to place the beam along their real position
         // we only want a maximum of 10 offset for their gradient
         var maxDistance:Int = Math.round(10 * layout.scale);
         
@@ -809,7 +818,8 @@ class ScoreStave extends Stave
         {
             // if the min note is not first or last, we can align notes directly to the position
             // of the min note
-            if (beatGroup.minNote != beatGroup.firstMinNote && beatGroup.minNote != beatGroup.lastMinNote)
+            if (beatGroup.minNote != beatGroup.firstMinNote &&
+                beatGroup.minNote != beatGroup.lastMinNote)
             {
                 return getNoteScorePosY(layout, beatGroup.minNote) + downOffset;
             }
@@ -861,10 +871,7 @@ class ScoreStave extends Stave
             return y1 - y;
         }        
     }
-    
-    
-   
-    
+
     private function paintTriplet(layout:ViewLayout, context:DrawingContext,
                                   voice:VoiceDrawing, x:Int, y:Int,
                                   voiceIndex:Int, multiVoice:Bool)
