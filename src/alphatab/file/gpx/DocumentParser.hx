@@ -20,6 +20,7 @@
  */
 package alphatab.file.gpx;
 
+import alphatab.file.guitarpro.Gp3Reader;
 import alphatab.model.BeatArpeggioDirection;
 import alphatab.model.BeatArpeggio;
 import alphatab.model.effects.GraceEffectTransition;
@@ -164,6 +165,15 @@ class DocumentParser
 
                 else if(j == "DaSegnoAlFine")
                     measureHeader.direction.addJump(Jump.DaSegnoAlFine);
+            }
+
+            if(mbar.accidentalCount != 0) {
+                measureHeader.keySignature = Gp3Reader.toKeySignature(
+                    mbar.accidentalCount);
+            }
+
+            if(mbar.mode != null) {
+
             }
 
             if(mbar.time != null && mbar.time.length == 2)

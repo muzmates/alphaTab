@@ -32,11 +32,16 @@ class GpxMasterBar
     public var repeatStart(default,default):Bool;
 
     public var alternateEndings(default, default): Int;
-    
+
+    public var accidentalCount(default, default): Int;
+    public var mode(default, default): String;
+
     public function new()
     {
         targets = new Array<String>();
         jumps = new Array<String>();
         alternateEndings = 0;
+        accidentalCount = 0;
+        mode = null;
     }
 }

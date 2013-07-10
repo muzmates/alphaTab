@@ -277,10 +277,12 @@ class ScoreStave extends Stave
         }
     }
     
-    private function paintKeySignature(layout:ViewLayout, context:DrawingContext, measure:MeasureDrawing, x:Int, y:Int)
+    private function paintKeySignature(layout:ViewLayout,
+                                       context:DrawingContext,
+                                       measure:MeasureDrawing, x:Int, y:Int)
     {
         if (!measure.headerDrawing().shouldPaintKeySignature(measure)) return;
-        
+
         // TODO: try to only naturalize required strings, not all previous set ones
                 
         x += measure.calculateClefSpacing(layout) + Math.floor(10*layout.scale);
@@ -302,17 +304,20 @@ class ScoreStave extends Stave
                 offsetClef = 1;
         }
 
-        // naturalize previous key
-        var naturalizeSymbols:Int = (previousKey <= 7) ? previousKey : previousKey - 7;        
-        var previousKeyPositions = (previousKey <= 7) ? SCORE_KEYSHARP_POSITIONS : SCORE_KEYFLAT_POSITIONS;
         var step = layout.scoreLineSpacing / 2;
-        for (i in 0 ... naturalizeSymbols)
-        {
-            var keyY:Int = 0;
-            var offset:Int = Math.round(((previousKeyPositions[i] + offsetClef) * step) + (6*layout.scale));
-            
-            KeySignaturePainter.paintNatural(context, x, cast (y + offset), layout);
-            x += Math.floor (8*layout.scale);
+
+        // naturalize previous key
+        if(previousKey != currentKey) {
+            var naturalizeSymbols:Int = (previousKey <= 7) ? previousKey : previousKey - 7;
+            var previousKeyPositions = (previousKey <= 7) ? SCORE_KEYSHARP_POSITIONS : SCORE_KEYFLAT_POSITIONS;
+            for (i in 0 ... naturalizeSymbols)
+            {
+                var keyY:Int = 0;
+                var offset:Int = Math.round(((previousKeyPositions[i] + offsetClef) * step) + (6*layout.scale));
+
+                KeySignaturePainter.paintNatural(context, x, cast (y + offset), layout);
+                x += Math.floor (8*layout.scale);
+            }
         }
                 
         // how many symbols do we need to get from a C-keysignature

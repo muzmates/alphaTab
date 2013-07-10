@@ -32,9 +32,12 @@ class MeasureHeaderDrawing extends MeasureHeader
     
     public function shouldPaintKeySignature(measure:MeasureDrawing) : Bool
     {
-        // don't draw keysignature on percusson tracks and only if a change 
+        // don't draw keysignature on percusson tracks and only if a change
         // was made
-        
+
+        if(measure.isFirstOfLine())
+            return true;
+
         if (measure.getPreviousMeasure() == null && keySignature == 0) // don't draw default keysignature
         {
             return false;

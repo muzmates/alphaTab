@@ -52,7 +52,7 @@ class DocumentReader
     
     public function read() : GpxDocument
     {
-        if(_xmlDocument != null) 
+        if(_xmlDocument != null)
         {
             readScore();
             readAutomations();
@@ -205,6 +205,21 @@ class DocumentReader
                         masterBar.repeatCount = Std.parseInt(repeatNode.att.count);
                     }
                 }
+
+                if(masterBarNode.hasNode.Key)
+                {
+                    var k = masterBarNode.node.Key;
+
+                    if(k.hasNode.AccidentalCount) {
+                        masterBar.accidentalCount = Std.parseInt(k.node.AccidentalCount.innerData);
+                    }
+
+                    if(k.hasNode.Mode) {
+                        masterBar.mode = k.node.Mode.innerData;
+                    }
+
+                }
+
                 _gpxDocument.masterBars.push(masterBar);
             }
         }
