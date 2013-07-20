@@ -356,6 +356,7 @@ class DocumentReader
                     else if(name == "Slide")
                     {
                         note.slide = true;
+                        note.slideType = propertyNode.node.Flags.innerData;
                     }
                  }
                  

@@ -20,6 +20,7 @@
  */
 package alphatab.file.gpx;
 
+import alphatab.model.SlideType;
 import alphatab.file.guitarpro.Gp3Reader;
 import alphatab.model.BeatArpeggioDirection;
 import alphatab.model.BeatArpeggio;
@@ -363,9 +364,26 @@ class DocumentParser
             note.isTiedNote = gpxNote.tieDestination;
             note.velocity = velocity;
             note.effect.vibrato = gpxNote.vibrato;
-            note.effect.slide = gpxNote.slide;
             note.effect.deadNote = gpxNote.mutedEnabled;
             note.effect.palmMute = gpxNote.palmMutedEnabled;
+            note.effect.slide = gpxNote.slide;
+
+            switch (gpxNote.slideType) {
+                case "1":
+                    note.effect.slideType = SlideType.FastSlideTo;
+                case "2":
+                    note.effect.slideType = SlideType.SlowSlideTo;
+                case "4":
+                    note.effect.slideType = SlideType.OutDownWards;
+                case "8":
+                    note.effect.slideType = SlideType.OutUpWards;
+                case "16":
+                    note.effect.slideType = SlideType.IntoFromBelow;
+                case "32":
+                    note.effect.slideType = SlideType.IntoFromAbove;
+                default:
+                    "";
+            }
 
             if (grace != null){
                 var graceEffect = _factory.newGraceEffect();

@@ -38,16 +38,18 @@ class GpxNote
     public var mutedEnabled(default,default):Bool;
     public var palmMutedEnabled(default,default):Bool;
     public var slide(default,default):Bool;
-    
+    public var slideType(default,default):String;
+
     public function new() 
     {
-         this.id = -1;
-         this.fret = -1;
-         this.string = -1;
-         this.tone = -1;
-         this.octave = -1;
-         this.element = -1;
-         this.variation = -1;
-         this.midiNumber = -1; 
+        this.id = -1;
+        this.fret = -1;
+        this.string = -1;
+        this.tone = -1;
+        this.octave = -1;
+        this.element = -1;
+        this.variation = -1;
+        this.midiNumber = -1;
+        this.slideType = "";
     }
 }
