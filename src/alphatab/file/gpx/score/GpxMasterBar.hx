@@ -35,6 +35,7 @@ class GpxMasterBar
 
     public var accidentalCount(default, default): Int;
     public var mode(default, default): String;
+    public var tripletFeel(default, default): String;
 
     public function new()
     {
@@ -43,5 +44,6 @@ class GpxMasterBar
         alternateEndings = 0;
         accidentalCount = 0;
         mode = null;
+        tripletFeel = null;
     }
 }

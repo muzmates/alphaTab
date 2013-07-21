@@ -183,6 +183,10 @@ class DocumentReader
                     masterBar.alternateEndings = Std.parseInt(
                         masterBarNode.node.AlternateEndings.innerData);
 
+                if(masterBarNode.hasNode.TripletFeel)
+                    masterBar.tripletFeel =
+                        masterBarNode.node.TripletFeel.innerData;
+
                 if(masterBarNode.hasNode.Directions)
                 {
                     var d = masterBarNode.node.Directions;

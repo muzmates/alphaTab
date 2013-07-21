@@ -20,6 +20,7 @@
  */
 package alphatab.file.gpx;
 
+import alphatab.model.TripletFeel;
 import alphatab.model.SlideType;
 import alphatab.file.guitarpro.Gp3Reader;
 import alphatab.model.BeatArpeggioDirection;
@@ -147,6 +148,15 @@ class DocumentParser
             measureHeader.repeatClose = mbar.repeatCount;
 
             measureHeader.alternateEndings = mbar.alternateEndings;
+
+            switch(mbar.tripletFeel) {
+                case "Triplet8th":
+                    measureHeader.tripletFeel = TripletFeel.Eighth;
+                case "Triplet16th":
+                    measureHeader.tripletFeel = TripletFeel.Sixteenth;
+                default:
+                    measureHeader.tripletFeel = TripletFeel.None;
+            }
 
             for(t in mbar.targets) {
                 if(t == "Segno")
