@@ -30,19 +30,19 @@ class FingeringType
      */
     public static inline var NoOrDead = -1;
     /**
-     * The thumb
+     * The thumb (P)
      */
     public static inline var Thumb = 0;
     /**
-     * The index finger
+     * The index finger (I)
      */
     public static inline var IndexFinger = 1;
     /**
-     * The middle finger
+     * The middle finger (M)
      */
     public static inline var MiddleFinger = 2;
     /**
-     * The annular finger
+     * The annular finger (A)
      */
     public static inline var AnnularFinger = 3;
     /**

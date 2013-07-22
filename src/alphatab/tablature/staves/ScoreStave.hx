@@ -23,6 +23,7 @@ import alphatab.model.Direction;
 import alphatab.model.Duration;
 import alphatab.model.Barre;
 import alphatab.model.effects.GraceEffectTransition;
+import alphatab.model.effects.FingeringType;
 import alphatab.model.MeasureClef;
 import alphatab.model.Note;
 import alphatab.model.SlideType;
@@ -1142,8 +1143,43 @@ class ScoreStave extends Stave
         paintHammerOn(layout, context, note, x, y);
         paintSlide(layout, context, note, x, y);
         paintTiedNote(layout, context, note, x, y);
+        paintFingering(layout, context, note, x, noteY);
     }
-    
+
+    private function paintFingering(layout: ViewLayout,
+                                    context: DrawingContext,
+                                    note: NoteDrawing,
+                                    x: Int,
+                                    noteY: Int) {
+
+        var fill: DrawingLayer = getVoiceDrawing(
+            note.voice.index,
+            context.get(DrawingLayers.Voice1),
+            context.get(DrawingLayers.Voice2));
+
+        if (note.effect.leftHandFinger != FingeringType.Unknown &&
+            note.effect.leftHandFinger != FingeringType.NoOrDead) {
+
+            var str = "";
+            switch(note.effect.leftHandFinger)
+            {
+                case FingeringType.Thumb:
+                    str = "T";
+                case FingeringType.IndexFinger:
+                    str = "1";
+                case FingeringType.MiddleFinger:
+                    str = "2";
+                case FingeringType.AnnularFinger:
+                    str = "3";
+                case FingeringType.LittleFinger:
+                    str = "4";
+            }
+
+            fill.addString(str, DrawingResources.effectFont, x,
+                           noteY - (DrawingResources.noteFontHeight / 2));
+        }
+    }
+
     private function paintTiedNote(layout:ViewLayout, context:DrawingContext, note:NoteDrawing, x:Int, y:Int)
     {
         var nextBeat:BeatDrawing = note.beatDrawing()

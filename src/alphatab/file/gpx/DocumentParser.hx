@@ -20,6 +20,7 @@
  */
 package alphatab.file.gpx;
 
+import alphatab.model.effects.FingeringType;
 import alphatab.model.TripletFeel;
 import alphatab.model.SlideType;
 import alphatab.file.guitarpro.Gp3Reader;
@@ -393,6 +394,39 @@ class DocumentParser
                     note.effect.slideType = SlideType.IntoFromAbove;
                 default:
                     "";
+            }
+
+            if(gpxNote.leftFingering != null || gpxNote.rightFingering != null)
+                note.effect.isFingering = true;
+
+            switch (gpxNote.leftFingering) {
+                case "P":
+                    note.effect.leftHandFinger = FingeringType.Thumb;
+                case "I":
+                    note.effect.leftHandFinger = FingeringType.IndexFinger;
+                case "M":
+                    note.effect.leftHandFinger = FingeringType.MiddleFinger;
+                case "A":
+                    note.effect.leftHandFinger = FingeringType.AnnularFinger;
+                case "C":
+                    note.effect.leftHandFinger = FingeringType.LittleFinger;
+                default:
+                    note.effect.leftHandFinger = FingeringType.Unknown;
+            }
+
+            switch (gpxNote.rightFingering) {
+                case "P":
+                    note.effect.rightHandFinger = FingeringType.Thumb;
+                case "I":
+                    note.effect.rightHandFinger = FingeringType.IndexFinger;
+                case "M":
+                    note.effect.rightHandFinger = FingeringType.MiddleFinger;
+                case "A":
+                    note.effect.rightHandFinger = FingeringType.AnnularFinger;
+                case "C":
+                    note.effect.rightHandFinger = FingeringType.LittleFinger;
+                default:
+                    note.effect.rightHandFinger = FingeringType.Unknown;
             }
 
             if (grace != null){

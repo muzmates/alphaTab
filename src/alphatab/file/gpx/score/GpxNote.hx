@@ -39,6 +39,8 @@ class GpxNote
     public var palmMutedEnabled(default,default):Bool;
     public var slide(default,default):Bool;
     public var slideType(default,default):String;
+    public var leftFingering(default,default):String;
+    public var rightFingering(default,default):String;
 
     public function new() 
     {
@@ -51,5 +53,7 @@ class GpxNote
         this.variation = -1;
         this.midiNumber = -1;
         this.slideType = "";
+        this.leftFingering = null;
+        this.rightFingering = null;
     }
 }

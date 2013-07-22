@@ -316,7 +316,15 @@ class DocumentReader
                                      ? toBool(noteNode.node.Tie.att.destination) 
                                      : false;
                  note.vibrato = noteNode.hasNode.Vibrato;
-                 
+
+                 if(noteNode.hasNode.LeftFingering) {
+                     note.leftFingering = noteNode.node.LeftFingering.innerData;
+                 }
+
+                 if(noteNode.hasNode.RightFingering) {
+                     note.rightFingering = noteNode.node.RightFingering.innerData;
+                 }
+
                  var propertyNodes = noteNode.node.Properties.nodes.Property;
                  for(propertyNode in propertyNodes)
                  {
