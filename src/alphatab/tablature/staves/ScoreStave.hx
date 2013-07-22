@@ -1091,7 +1091,7 @@ class ScoreStave extends Stave
             NotePainter.paintNote(fill, noteHeadX, noteHeadY, layout.scale, full);
         }
                 
-        paintEffects(layout, context, note, noteHeadX, y, noteHeadY);
+        paintEffects(layout, context, note, noteHeadX, y, noteHeadX, noteHeadY);
         }
     }
     
@@ -1134,7 +1134,12 @@ class ScoreStave extends Stave
         return note.scorePosY;
     }
     
-    private function paintEffects(layout:ViewLayout, context:DrawingContext, note:NoteDrawing, x:Int, y:Int, noteY:Int)
+    private function paintEffects(layout:ViewLayout,
+                                  context:DrawingContext,
+                                  note:NoteDrawing,
+                                  x:Int, y:Int,
+                                  noteX: Int,
+                                  noteY:Int)
     {
         paintDottedNote(layout, context, note.voiceDrawing(), note.displaced, x, noteY);
         paintStaccato(layout, context, note, x, y);
@@ -1143,14 +1148,14 @@ class ScoreStave extends Stave
         paintHammerOn(layout, context, note, x, y);
         paintSlide(layout, context, note, x, y);
         paintTiedNote(layout, context, note, x, y);
-        paintFingering(layout, context, note, x, noteY);
+        paintFingering(layout, context, note, noteX, noteY);
     }
 
     private function paintFingering(layout: ViewLayout,
                                     context: DrawingContext,
                                     note: NoteDrawing,
                                     x: Int,
-                                    noteY: Int) {
+                                    y: Int) {
 
         var fill: DrawingLayer = getVoiceDrawing(
             note.voice.index,
@@ -1175,8 +1180,14 @@ class ScoreStave extends Stave
                     str = "4";
             }
 
-            fill.addString(str, DrawingResources.effectFont, x,
-                           noteY - (DrawingResources.noteFontHeight / 2));
+            var offset = 14;
+
+            if(note.voice.duration.isDotted)
+                offset = 18;
+
+            fill.addString(str, DrawingResources.effectFont,
+                           x + offset * layout.scale,
+                           y + (DrawingResources.effectFontHeight / 2));
         }
     }
 
