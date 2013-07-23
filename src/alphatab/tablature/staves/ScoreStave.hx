@@ -1157,10 +1157,7 @@ class ScoreStave extends Stave
                                     x: Int,
                                     y: Int) {
 
-        var fill: DrawingLayer = getVoiceDrawing(
-            note.voice.index,
-            context.get(DrawingLayers.Voice1),
-            context.get(DrawingLayers.Voice2));
+        var fill: DrawingLayer = context.get(DrawingLayers.MainComponents);
 
         if (note.effect.leftHandFinger != FingeringType.Unknown &&
             note.effect.leftHandFinger != FingeringType.NoOrDead) {
@@ -1185,7 +1182,7 @@ class ScoreStave extends Stave
             if(note.voice.duration.isDotted)
                 offset = 18;
 
-            fill.addString(str, DrawingResources.effectFont,
+            fill.addString(str, DrawingResources.defaultFont,
                            x + offset * layout.scale,
                            y + (DrawingResources.effectFontHeight / 2));
         }
