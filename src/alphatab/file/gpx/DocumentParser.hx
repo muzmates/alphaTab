@@ -378,6 +378,7 @@ class DocumentParser
             note.effect.deadNote = gpxNote.mutedEnabled;
             note.effect.palmMute = gpxNote.palmMutedEnabled;
             note.effect.slide = gpxNote.slide;
+            note.showString = gpxNote.showString;
 
             switch (gpxNote.slideType) {
                 case "1":

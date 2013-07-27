@@ -32,7 +32,8 @@ class GpxNote
     public var element(default,default):Int;
     public var variation(default,default):Int;
     public var midiNumber(default,default):Int;
-    
+
+    public var showString(default,default):Bool;
     public var tieDestination(default,default):Bool;
     public var vibrato(default,default):Bool;
     public var mutedEnabled(default,default):Bool;
@@ -55,5 +56,6 @@ class GpxNote
         this.slideType = "";
         this.leftFingering = null;
         this.rightFingering = null;
+        this.showString = false;
     }
 }

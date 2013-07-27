@@ -598,7 +598,8 @@ class ScoreStave extends Stave
             }
 
             if(!voice.isGrace){
-                paintBeam(layout, context, voice, voiceIndex, multiVoice, x, y);
+                paintBeam(layout, context, voice,
+                          voiceIndex, multiVoice, x, y);
                 paintTriplet(layout, context, voice, x, y, voiceIndex, multiVoice);
             }
         }
@@ -661,11 +662,11 @@ class ScoreStave extends Stave
     }
         
     private function  paintBeam(layout:ViewLayout,
-                               context:DrawingContext,
-                               voice:VoiceDrawing,
-                               voiceIndex: Int,
-                               multiVoice: Bool,
-                               x:Int, y:Int)
+                                context:DrawingContext,
+                                voice:VoiceDrawing,
+                                voiceIndex: Int,
+                                multiVoice: Bool,
+                                x:Int, y:Int)
     {
         if (voice.isRestVoice()) return;
         
@@ -681,32 +682,32 @@ class ScoreStave extends Stave
             context.get(DrawingLayers.VoiceDraw1),
             context.get(DrawingLayers.VoiceDraw2));
 
+        var eff: DrawingLayer = context.get(DrawingLayers.MainComponents);
+        var direction:Int = null;
+
+        if(multiVoice)
+            direction = voiceIndex == 0 ? VoiceDirection.Up : VoiceDirection.Down;
+        else
+            direction = voice.beatGroup.getDirection();
+
+        var xMove:Float = direction == VoiceDirection.Up ?
+                       DrawingResources.getScoreNoteSize(layout, false).x : 0;
+        var yMove:Float = direction == VoiceDirection.Up ?
+                          Math.round(layout.scoreLineSpacing / 3) + 1 :
+                          Math.round(layout.scoreLineSpacing / 3) * 2;
+        var key:Int = voice.beat.measure.keySignature();
+        var clef:Int = voice.beat.measure.clef;
+
+        var y1:Int = y + (direction == VoiceDirection.Up
+                     ? getNoteScorePosY(layout, voice.minNote)
+                     : getNoteScorePosY(layout, voice.maxNote));
+
+        var y2:Int = Math.round(y + calculateBeamY(layout,
+                                voice.beatGroup, direction,
+                                Math.round(x + xMove), key, clef));
+
         if (voice.duration.value >= Duration.HALF)
         {
-            var direction:Int = null;
-
-            if(multiVoice)
-                direction = voiceIndex == 0 ? VoiceDirection.Up : VoiceDirection.Down;
-            else
-                direction = voice.beatGroup.getDirection();
-
-            var key:Int = voice.beat.measure.keySignature();
-            var clef:Int = voice.beat.measure.clef;
-            
-            var xMove:Float = direction == VoiceDirection.Up ? 
-                            DrawingResources.getScoreNoteSize(layout, false).x : 0;
-            var yMove:Float = direction == VoiceDirection.Up ?
-                            Math.round(layout.scoreLineSpacing / 3) + 1 :
-                            Math.round(layout.scoreLineSpacing / 3) * 2;
-
-            var y1:Int = y + (direction == VoiceDirection.Up
-                                ? getNoteScorePosY(layout, voice.minNote)
-                                : getNoteScorePosY(layout, voice.maxNote));
-
-            var y2:Int = Math.round(y + calculateBeamY(layout,
-                                    voice.beatGroup, direction,
-                                    Math.round(x + xMove), key, clef));
-
             // paint the line
             draw.addLine(x + xMove, y1 + yMove, x + xMove, y2 + yMove);
 
@@ -774,6 +775,34 @@ class ScoreStave extends Stave
                     }
                 }
             }
+
+        }
+
+        // Check if we need to paint string number
+        var note: Note = null;
+        var exY = y2;
+        var exX = x + xMove;
+
+        if(direction == VoiceDirection.Down)
+            exY += cast (yMove + 15 * layout.scale);
+        else
+            exY -= cast (yMove + 15 * layout.scale);
+
+        for(n in voice.notes) {
+            if(n.showString) {
+                note = n;
+                break;
+            }
+        }
+
+        if(note != null) {
+            eff.addString(Std.string(note.string),
+            DrawingResources.defaultFont, exX, exY);
+
+            draw.addCircle(exX - 3 * layout.scale,
+                           exY - DrawingResources.defaultFontHeight +
+                           2 * layout.scale,
+                           13);
         }
     }
     

@@ -26,6 +26,7 @@ class Note
     public var value(default,default):Int;
     public var velocity(default,default):Int;
     public var string(default,default):Int;
+    public var showString(default,default):Bool;
     public var isTiedNote(default,default):Bool;
     public var effect(default,default):NoteEffect;
     public var voice(default,default):Voice;

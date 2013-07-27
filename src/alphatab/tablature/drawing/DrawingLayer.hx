@@ -103,11 +103,11 @@ class DrawingLayer
                         graphics.bezierCurveTo(elm.X2, elm.Y2, elm.X3, elm.Y3, elm.X4, elm.Y4);
                     case "addCircle":
                         finish(graphics);
-                        graphics.beginPath();
                         var x:Int = cast elm.X;
                         var y:Int = cast elm.Y;
                         var radius:Int = cast elm.Radius;
                         graphics.moveTo(x+radius, y+radius);
+                        graphics.beginPath();
                         graphics.circle(x+radius, y+radius, radius);
                         graphics.closePath();
                     case "addRect":

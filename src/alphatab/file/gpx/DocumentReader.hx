@@ -35,7 +35,7 @@ import alphatab.file.gpx.score.GpxScore;
 import alphatab.file.gpx.score.GpxTrack;
 import alphatab.file.gpx.score.GpxVoice;
 
-class DocumentReader 
+class DocumentReader
 {
     private var _xmlDocument:Xml;
     private var _dom:Fast;
@@ -369,6 +369,10 @@ class DocumentReader
                     {
                         note.slide = true;
                         note.slideType = propertyNode.node.Flags.innerData;
+                    }
+                    else if(name == "ShowStringNumber")
+                    {
+                        note.showString = true;
                     }
                  }
                  
