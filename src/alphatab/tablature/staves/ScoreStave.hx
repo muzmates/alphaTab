@@ -786,7 +786,7 @@ class ScoreStave extends Stave
         if(direction == VoiceDirection.Down)
             exY += cast (yMove + 15 * layout.scale);
         else
-            exY -= cast (yMove + 15 * layout.scale);
+            exY -= cast (yMove + 4 * layout.scale);
 
         for(n in voice.notes) {
             if(n.showString) {
