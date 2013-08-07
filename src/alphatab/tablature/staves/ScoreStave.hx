@@ -985,6 +985,8 @@ class ScoreStave extends Stave
                 return (xArg - startX)*(endY - startY) / (endX - startX) + startY;
             }
 
+            h = direction == VoiceDirection.Up ? h : -h;
+
             draw.addLine(startX, startY, startX, startY+h);
             var tmpEndX = startX + ((endX - startX) / 2) - w;
             draw.addLine(startX, startY, tmpEndX, pointY(tmpEndX));
