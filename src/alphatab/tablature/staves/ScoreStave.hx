@@ -1208,7 +1208,7 @@ class ScoreStave extends Stave
                     str = "4";
             }
 
-            var offset = 14;
+            var offset = 11;
 
             if(note.voice.duration.isDotted)
                 offset = 18;
