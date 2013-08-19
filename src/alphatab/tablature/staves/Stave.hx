@@ -388,8 +388,9 @@ class Stave
             return 0;
 
         var offset = BeatArpeggio.size(layout);
+        var displaced = beat.anyDisplaced();
 
-        if(beat.anyDisplaced())
+        if(displaced)
             offset += BeatDrawing.displacedOffset(layout);
 
         var realY:Int = y + spacing.get(getLineTopSpacing()) + beat.maxNote.scorePosY;
@@ -411,11 +412,12 @@ class Stave
             realY += Math.floor(step);
         }
 
+        if(beat.hasAccitental() && displaced)
+            return BeatDrawing.displacedOffset(layout);
         if(beat.hasAccitental())
             return offset;
         else {
-            return cast (beat.anyDisplaced() ? 0:
-                         BeatDrawing.displacedOffset(layout));
+            return cast (displaced ? 0: BeatDrawing.displacedOffset(layout));
         }
     }
 }

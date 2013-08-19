@@ -62,10 +62,10 @@ class BeatDrawing extends Beat
         var layout:ViewLayout = measureDrawing().staveLine.tablature.viewLayout;
         var r = measureDrawing().staveLine.x + measureDrawing().x + measureDrawing().getDefaultSpacings(layout) + x;
 
-        if(hasAccitental() && effectsCache.arpeggio)
+        if(effectsCache.arpeggio && hasAccitental())
             r += BeatArpeggio.size(layout);
 
-        else if(effectsCache.arpeggio && (!anyDisplaced() || hasAccitental()))
+        else if(effectsCache.arpeggio && !anyDisplaced())
             r += displacedOffset(layout);
 
         return r;

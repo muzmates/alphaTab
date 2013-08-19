@@ -511,7 +511,7 @@ class TablatureStave extends Stave
         paintPalmMute(layout, context, voice, x, y);    
         paintNoteVibrato(layout, context, voice, x, y);
         paintHarmonics(layout, context, voice, x, y);
-        paintFingering(layout, context, voice, x, y);
+        //paintFingering(layout, context, voice, x, y);
         paintTrillBeat(layout, context, voice, x, y);
     }
     
