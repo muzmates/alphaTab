@@ -533,10 +533,14 @@ class ScoreStave extends Stave
         var x1:Float = x - 3 * layout.scale;
         var x2:Float = x + 12 * layout.scale;
 
-        //if(note.beatDrawing().effectsCache.arpeggio) {
-            //x1 += BeatArpeggio.size(layout);
-            //x2 += BeatArpeggio.size(layout);
-        //}
+        var beat = note.beatDrawing();
+
+        if(beat.effectsCache.arpeggio) {
+            if(!beat.anyDisplaced() || !beat.hasAccitental()) {
+                x1 += BeatArpeggio.size(layout);
+                x2 += BeatArpeggio.size(layout);
+            }
+        }
 
         for(v in note.beatDrawing().voices) {
             var vv: VoiceDrawing = cast v;
