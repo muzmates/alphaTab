@@ -32,6 +32,8 @@ class BeatGroup
     private var _voices:Array<VoiceDrawing>;
     
     private var _lastVoice:VoiceDrawing;
+
+    private var _graceShift:Int = 0;
     
     // the first min note within this group
     public var firstMinNote(default,default):NoteDrawing;
@@ -47,6 +49,7 @@ class BeatGroup
     public var maxNote(default,default):NoteDrawing;    
     
     public var isPercussion(default,default):Bool;
+
     
     public function new() 
     { 
@@ -256,8 +259,19 @@ class BeatGroup
         // a division can contains a single quarter
         var divisionLength = SongManager.getDivisionLength(m1.header);
 
+        // add grace shift if there are grace notes in current measure and voice
+        var prevBeat:BeatDrawing = (cast voice.beat).getPreviousBeat();
+        while (prevBeat != null && prevBeat.measureDrawing() == m1){
+            if (prevBeat.voices[voice.index].isGrace){
+                var nextBeat:BeatDrawing = prevBeat.getNextBeat();
+                _graceShift = nextBeat.getRealStart() - prevBeat.getRealStart();
+                break;
+            }
+            prevBeat = prevBeat.getPreviousBeat();
+        };
+
         // check if voices are on the same division
-        return (voice.beat.getRealStart() - m1.start()) % divisionLength != 0;
+        return (voice.beat.getRealStart() - m1.start()) % divisionLength != _graceShift;
 
     }
     
