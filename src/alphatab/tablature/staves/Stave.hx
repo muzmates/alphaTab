@@ -222,6 +222,11 @@ class Stave
                 measureHeaderTailText("D.S. al Fine", measure, context,
                                       layout, x, jy);
             }
+
+            if(measure.header.direction.hasJump(Jump.DaCapoAlCoda)) {
+                measureHeaderTailText("D.C. al Coda", measure, context,
+                layout, x, jy);
+            }
         }
 
         // Repeat Closings

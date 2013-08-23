@@ -32,6 +32,7 @@ enum Jump {
     DaCoda;
     DaSegnoAlCoda;
     DaSegnoAlFine;
+    DaCapoAlCoda;
 }
 
 /**

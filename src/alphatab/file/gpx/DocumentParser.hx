@@ -177,6 +177,9 @@ class DocumentParser
 
                 else if(j == "DaSegnoAlFine")
                     measureHeader.direction.addJump(Jump.DaSegnoAlFine);
+
+                else if(j == "DaCapoAlCoda")
+                    measureHeader.direction.addJump(Jump.DaCapoAlCoda);
             }
 
             if(mbar.accidentalCount != 0) {
