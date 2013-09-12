@@ -476,17 +476,10 @@ class ScoreStave extends Stave
     private function paintBeats(layout:ViewLayout, context:DrawingContext, measure:MeasureDrawing, x:Int, y:Int)
     {
         var multiVoice = measure.isMultiVoice();
-
         for (beat in measure.beats)
         {
             var bd:BeatDrawing = cast beat;
-            var isGrace = false;
-            for (v in beat.voices){
-                isGrace = v.isGrace || isGrace;
-            }
             paintBeat(layout, context, bd, x + bd.x, y, multiVoice);
-
-            //x += bd.fullWidth();
         }
     }
     

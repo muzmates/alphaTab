@@ -313,8 +313,8 @@ class DocumentParser
                                     n++;
                                 }
                             }
-                            start += voice.duration.time();
-                            
+                            // grace beat has the same start as main beat
+                            if (!beat.isGrace) start += voice.duration.time();
                             b++;
                         }
                     }
@@ -542,10 +542,12 @@ class DocumentParser
         while(i < count)
         {
             var currentBeat = measure.beats[i];
-            if(currentBeat.start == start)
+            // grace beat has same start as parent beat
+            if(currentBeat.start == start && !currentBeat.isGrace)
             {
                 return currentBeat;
             }
+
             i++;
         }
         var newBeat = _factory.newBeat();
