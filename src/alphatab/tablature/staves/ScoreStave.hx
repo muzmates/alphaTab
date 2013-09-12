@@ -1428,10 +1428,11 @@ class ScoreStave extends Stave
         var realX:Float = x - (10 * layout.scale);
         //TODO: add half of the line spacing, because of bug in displaying. Wrong decision?
         var realY:Float = y - (9 * layout.scale) - layout.scoreLineSpacing/2;
-        var fill:DrawingLayer = note.voice.index == 0 ?
-        context.get(DrawingLayers.VoiceEffects1) :
-        context.get(DrawingLayers.VoiceEffects2);
-        
+        var fill: DrawingLayer = getVoiceDrawing(
+            note.voice.index,
+            context.get(DrawingLayers.Voice1),
+            context.get(DrawingLayers.Voice2));
+
         if (note.effect.deadNote)
         {
             realY += layout.scoreLineSpacing;
