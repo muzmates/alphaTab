@@ -47,11 +47,10 @@ class Beat
 
     private function getIsGrace(): Bool
     {
-        if (_isGrace == null){
-            _isGrace = false;
-            for (v in voices){
-                _isGrace = v.isGrace || _isGrace;
-            }
+        // value can be cashed but it will brake logic in DocumentParser
+        _isGrace = false;
+        for (v in voices){
+            _isGrace = v.isGrace || _isGrace;
         }
         return _isGrace;
     }
