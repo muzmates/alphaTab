@@ -398,6 +398,7 @@ class PageViewLayout extends ViewLayout
                 size = ctx.graphics.measureText(str);
                 tX = (clientArea.width - size - contentPadding.right);
                 ctx.get(DrawingLayers.LayoutBackground).addString(str, DrawingResources.wordsFont, x, y);
+                y += Math.floor(20*scale);
             }
             if (song.words != "" && (song.pageSetup.headerAndFooter & HeaderFooterElements.WORDS != 0))
             {
