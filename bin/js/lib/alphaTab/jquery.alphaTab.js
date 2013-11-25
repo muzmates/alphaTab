@@ -127,16 +127,36 @@ var alphaTabWrapper;
 			}
         }
 
+        this.loadStream = function(content, reader){
+            try
+            {
+                self.tablature.isError = false;
+
+                // create parser and reader
+                var parser = new reader();
+                var reader = new alphatab.io.StringInputStream(content);
+                parser.init(reader, self.factory);
+                var song = parser.readSong();
+                alphatab.file.SongReader.finalize(song);
+                // read song
+                songLoaded(song);
+            }
+            catch(e)
+            {
+                updateError(e);
+            }
+        }
+
         this.loadFile = function(url)
         {
             try
-			{
-				alphatab.file.SongLoader.loadSong(url, self.factory, songLoaded);
-			}
-			catch(e)
-			{
+	    {
+		alphatab.file.SongLoader.loadSong(url, self.factory, songLoaded);
+	    }
+	    catch(e)
+	    {
                 updateError(e);
-			}
+	    }
         }
 
         // plugin callbacks on load
@@ -151,20 +171,20 @@ var alphaTabWrapper;
             if(self.options.loadCallback)
                 self.options.loadCallback(song);
             // update tablature
-			try
-			{
-				self.tablature.setTrack(song.tracks[self.options.track]);
-			}
-			catch( e )
-			{
-				alert(e);
-			}
+	    try
+	    {
+		self.tablature.setTrack(song.tracks[self.options.track]);
+	    }
+	    catch( e )
+	    {
+		alert(e);
+	    }
             // additional plugin callbacks
             for(var i = 0; i < self.loadCallbacks.length; i++)
             {
                 self.loadCallbacks[i](song);
             }
-        }
+        };
 
         var updateError = function(msg)
         {
