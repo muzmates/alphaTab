@@ -31,7 +31,9 @@ class PlatformFactory
             return new SvgCanvas();
         }
         else {
-            #if js
+            #if json
+                return new alphatab.platform.js.JsonCanvas(object);
+            #elseif js
                 return new alphatab.platform.js.Html5Canvas(object);
 			#elseif cs
 				return new alphatab.platform.cs.GdiCanvas();

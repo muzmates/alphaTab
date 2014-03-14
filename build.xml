@@ -1,4 +1,4 @@
-<project name="alphaTab" default="haxe-js" basedir=".">
+<project name="alphaTab" default="haxe-js-json" basedir=".">
     <description>
         a buildfile for creating alphaTab releases
     </description>
@@ -90,7 +90,27 @@
             <arg value="-D" />
             <arg value="DEBUG_DRAWING" />
         </exec>
-	</target>	
+	</target>
+
+
+    <target name="haxe-js-json" depends="global-init">
+        <delete file="${haxe-js}" />
+        <exec executable="haxe" failonerror="true">
+            <arg value="-cp" />
+            <arg value="${src}"/>
+
+            <arg value="-main" />
+            <arg value="alphatab.Main" />
+
+            <arg value="-js" />
+            <arg value="${haxe-js}" />
+
+            <!--<arg value="-debug" />-->
+
+            <arg value="-D" />
+            <arg value="json" />
+        </exec>
+    </target>
    
    <target name="min-js">
 		<java jar="${tools}\compiler.jar" fork="true" failonerror="true">

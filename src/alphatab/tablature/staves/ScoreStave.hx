@@ -236,12 +236,11 @@ class ScoreStave extends Stave
         var realX:Int = x + measure.x;
         var realY:Int = y + spacing.get(TopPadding);
         var w:Int = measure.width + measure.spacing;
-        
         paintDivisions(layout, context, measure, realX, y, 3, spacing.get(ScoreMiddleLines), spacing.spacing[ScoreMiddleLines]);
         paintClef(layout, context, measure, realX, y);
         paintKeySignature(layout, context, measure, realX, y);
         paintTimeSignature(layout, context, measure, realX, y);
-        
+
         paintRepeatEndings(layout, context, measure, realX, y);
         paintAlternateEndings(layout, context, measure, realX, y);
 
@@ -397,7 +396,7 @@ class ScoreStave extends Stave
         
         y += spacing.get(Tempo);
 
-        TempoPainter.paintTempo(context, x, y, layout.scale); 
+        TempoPainter.paintTempo(context, x, y, layout.scale);
             
         x += Math.round(8 * layout.scale);
         var value:String = (" = " + measure.header.tempo.value);
@@ -976,7 +975,12 @@ class ScoreStave extends Stave
 
             var s:String = Std.string(voice.tripletGroup.triplet);
             context.graphics.font = DrawingResources.effectFont;
+            #if json
+            var w:Float = (s.length * 4)*layout.scale;
+            #else
             var w:Float = context.graphics.measureText(s);
+            #end
+
 
             function pointY(xArg:Float): Float{
                 return (xArg - startX)*(endY - startY) / (endX - startX) + startY;
