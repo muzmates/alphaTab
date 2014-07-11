@@ -238,6 +238,10 @@ class StaveLine
                 for (beat in currentMeasure.beats){
                     barre = (barre!=null) ? barre : new BarreDrawning();
                     if (beat.properties.barre != null){
+                        if (barre.fret != null && beat.properties.barre.fret != barre.fret){
+                            addBarre(barre);
+                            barre = new BarreDrawning();
+                        }
                         barre.addBeat(beat);
                     } else {
                         addBarre(barre);
