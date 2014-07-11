@@ -247,7 +247,8 @@ class ScoreStave extends Stave
         realX += measure.getDefaultSpacings(layout);
         paintCoda(layout, context, measure, realX, y);
         paintText(layout, context, measure, realX, y);
-        paintTempo(layout, context, measure, x, y);
+        if (!this.hideTempo)
+            paintTempo(layout, context, measure, x, y);
 
         paintTripletFeel(layout, context, measure, realX, y);
         paintMarker(layout, context, measure, realX, y);

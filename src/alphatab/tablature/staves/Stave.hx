@@ -54,6 +54,9 @@ class Stave
     // Whether to paint alternate endings
     public var bothStavesActive = false;
 
+    // Whether to hide tempo
+    public var hideTempo = false;
+
     public function new(line:StaveLine, layout:ViewLayout)
     {
         this.index = 0;
@@ -62,6 +65,7 @@ class Stave
 
         this.multiVoiceSamePainting = line.tablature.getStaveSetting(getStaveId(), "multiVoiceSamePainting", false);
         this.bothStavesActive = line.tablature.getStaveSetting(getStaveId(), "bothStavesActive", false);
+        this.hideTempo = line.tablature.getStaveSetting(getStaveId(), "hideTempo", false);
     }
     
     public function getStaveId() : String
@@ -296,8 +300,9 @@ class Stave
             if (symbol != null) 
                 context.get(DrawingLayers.MainComponents).addMusicSymbol(symbol, x + TS_NUMBER_WIDTH * scale, y, scale);
         }
+
     }
-    
+
     private function getTimeSignatureSymbol(number:Int)
     {
         switch(number) 
