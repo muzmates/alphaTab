@@ -16,6 +16,7 @@
  */
 package alphatab.tablature.model;
 
+import alphatab.model.TripletFeel;
 import alphatab.model.Note;
 import alphatab.tablature.drawing.DrawingContext;
 import alphatab.tablature.drawing.DrawingLayer;
@@ -31,15 +32,17 @@ class TripletGroup
     public var voices(default,default):Array<VoiceDrawing>;
     private var _voiceIndex:Int;
     public var triplet(default,default): Int;
+    private var _isFull:Bool;
     
     public function isFull()
     {
-        return voices.length == triplet;
+        return _isFull;
     }
     
     public function new(voice:Int) 
     {
         _voiceIndex = voice;
+        _isFull = false;
         voices = new Array<VoiceDrawing>();
     }
     
@@ -55,7 +58,23 @@ class TripletGroup
             if (voice.index != _voiceIndex || voice.duration.tuplet.enters != triplet || isFull()) return false;
         }
         voices.push(voice);
-        
+        checkIfFull();
         return true;
-    }    
+    }
+
+    private function checkIfFull(){
+        var tripletSize = 0;
+        var weight = 0;
+        for (v in voices){
+            if (v.beat.measure.tripletFeel() == TripletFeel.Eighth){
+                tripletSize = 8;
+            }
+            if (v.beat.measure.tripletFeel() == TripletFeel.Sixteenth){
+                tripletSize = 16;
+            }
+            if (tripletSize == 0) continue;
+            weight += Std.int(tripletSize / v.duration.value);
+        };
+        _isFull = weight == triplet;
+    }
 }
